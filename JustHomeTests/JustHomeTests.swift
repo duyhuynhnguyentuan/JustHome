@@ -29,7 +29,7 @@ struct JustHomeTests {
     func testISO8601DateFormatter() {
         let date = Date()
 
-        let ISOdateString = "2024-10-08T12:30:27"
+      
             // Assert the result
             #expect(DateFormatter.iso8601Formatter.string(from: date) == "2024-10-08T12:30:27")
     }
@@ -40,6 +40,17 @@ struct JustHomeTests {
          if let normalDateTime = ISOdateString.iso8601ToNormalDate(){
              #expect(normalDateTime == "2024-10-08")
          }
+    }
+    
+    @Test("Test url of getting projects")
+    func testURLOfGettingProjects() {
+        let page = 1
+        let loadProjectsRequest = JHRequest(endpoint: .projects, queryParameters:
+            [
+                URLQueryItem(name: "page", value: String(page))
+            ]
+        )
+        #expect(loadProjectsRequest.url == URL(string: "https://realestateproject-bdhcgphcfsf6b4g2.canadacentral-01.azurewebsites.net/api/projects?page=1")!)
     }
 
 }

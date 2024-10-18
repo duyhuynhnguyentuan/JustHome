@@ -21,9 +21,14 @@ struct JustHomeApp: App {
     /// connect to the app delegate
     @UIApplicationDelegateAdaptor private var appDelegate: AppDelgate
     @StateObject var authService = AuthService(keychainService: KeychainService.shared, httpClient: HTTPClient())
+    @StateObject private var routerManager = NavigationRouter()
     var body: some Scene {
         WindowGroup {
             ContentView(authService: self.authService)
+                .environmentObject(routerManager)
+                .onAppear{
+                    appDelegate.app = self
+                }
         }
     }
 }

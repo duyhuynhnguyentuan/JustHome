@@ -11,3 +11,4 @@ enum LoadingState {
     case loading
     case finished
 }
+

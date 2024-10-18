@@ -10,10 +10,12 @@ import SwiftUI
 struct JHButtonModifier: ViewModifier {
     let buttonHeight: CGFloat
     let backgroundColor: Color
+    let buttonWidht: CGFloat
     
-    init(buttonHeight: CGFloat = 44, backgroundColor: Color = .theme.green) {
+    init(buttonHeight: CGFloat = 44, backgroundColor: Color = .theme.green, buttonWidth: CGFloat = 352) {
         self.buttonHeight = buttonHeight
         self.backgroundColor = backgroundColor
+        self.buttonWidht = buttonWidth
     }
     
     func body(content: Content) -> some View {
@@ -21,7 +23,7 @@ struct JHButtonModifier: ViewModifier {
             .font(.subheadline)
             .fontWeight(.semibold)
             .foregroundColor(.white)
-            .frame(width: 352, height: buttonHeight)
+            .frame(width: buttonWidht, height: buttonHeight)
             .background(backgroundColor)
             .cornerRadius(8)
     }

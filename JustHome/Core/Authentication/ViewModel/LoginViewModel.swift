@@ -27,7 +27,7 @@ class LoginViewModel: ObservableObject {
             self.error = error
             print("Error: \(error)")
         } catch {
-            print("extra error: \(error)")
+            print("Unexpected error : \(error.localizedDescription)")
         }
       
     }

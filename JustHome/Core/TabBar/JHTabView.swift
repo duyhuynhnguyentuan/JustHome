@@ -3,14 +3,15 @@ import SwiftUI
 struct JHTabView: View {
     @State private var selectedTab = 0
     let authService: AuthService
-    
+    let projectsService: ProjectsService
     init(authService: AuthService) {
         self.authService = authService
+        self.projectsService = ProjectsService(httpClient: authService.httpClient)
     }
     
     var body: some View {
         TabView(selection: $selectedTab) {
-            FeedView()
+            FeedView(projectsService: projectsService)
                 .tabItem {
                     Image(systemName: selectedTab == 0 ? "house.fill" : "house")
                         .environment(\.symbolVariants, selectedTab == 0 ? .fill : .none)

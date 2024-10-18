@@ -118,8 +118,10 @@ final class JHRequest {
     }
 }
     // MARK: - Request convenience
+    //access url more quickly, simple ones
 extension JHRequest {
     static let listCustomersRequest = JHRequest(endpoint: .customers)
     static let authRequest = JHRequest(endpoint: .auth)
+    static let projectsRequest = JHRequest(endpoint: .projects)
 }
 
