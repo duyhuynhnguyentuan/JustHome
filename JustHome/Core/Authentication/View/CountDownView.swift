@@ -26,6 +26,6 @@ struct CountDownView: View {
     }
 }
 
-#Preview {
-    CountDownView(phoneViewModel: PhoneViewModel(phoneNumber: "0835488888"))
-}
+//#Preview {
+//    CountDownView(phoneViewModel: PhoneViewModel(phoneNumber: "0835488888"))
+//}

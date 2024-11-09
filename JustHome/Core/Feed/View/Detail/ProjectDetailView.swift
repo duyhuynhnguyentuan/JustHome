@@ -6,15 +6,22 @@
 //
 
 import SwiftUI
+import SceneKit
+import SwiftUIPanoramaViewer
 
 struct ProjectDetailView: View {
+    //360 tour
+    @State var fullScreen360:Bool = false
+    @State var rotationIndicator:Float = 0.0
+    @State var scene3D = SCNScene()
+    //others
     @State private var isPresentedPickCategorySheet = false
     @StateObject private var viewModel: ProjectDetailViewModel
     let project: Project
     @Environment(\.dismiss) private var dismiss
     @Environment(\.properties) private var props
     init(project: Project){
-        _viewModel = StateObject(wrappedValue: ProjectDetailViewModel())
+        _viewModel = StateObject(wrappedValue: ProjectDetailViewModel(projectID: project.projectID))
         self.project = project
     }
     @State private var tabs: [ProjectDetailTabModel] = [
@@ -55,14 +62,29 @@ struct ProjectDetailView: View {
                 }
                 .frame(maxWidth: props.size.width * 0.95, alignment: .leading)
                 //MARK: Booking button
+                switch viewModel.loadingState {
+                case .idle:
+                    EmptyView()
+                case .loading:
+                    ProgressView()
+                case .finished:
                     Button{
                         isPresentedPickCategorySheet = true
                     }label:{
-                        Text("Đặt chỗ")
-                            .textCase(.uppercase)
-                            .bold()
-                            .modifier(JHButtonModifier( buttonWidth: props.size.width * 0.95))
+                        if(viewModel.hasOpenForSale) {
+                            Text("Đặt chỗ")
+                                .textCase(.uppercase)
+                                .bold()
+                                .modifier(JHButtonModifier(buttonWidth: props.size.width * 0.95))
+                        }else{
+                            Text("Chưa có đợt mở bán nào")
+                                .textCase(.uppercase)
+                                .bold()
+                                .modifier(JHButtonModifier(backgroundColor: Color.secondary, buttonWidth: props.size.width * 0.95))
+                        }
                     }
+                    .disabled(!viewModel.hasOpenForSale)
+                }
                 //MARK: Contact section
                 ContactView()
                 //MARK: Scrollable TabView
@@ -73,18 +95,18 @@ struct ProjectDetailView: View {
                             switch tab.id {
                             case .general:
                                 GeneralTabView()
-                                    .frame(width: props.size.width, height: props.size.height * 2)
+                                    .frame(width: props.size.width, height: props.size.height)
                                  
                             case .policy:
-                                Text("dit")
+                                Text("Chisnh sach")
                                     .frame(width: props.size.width, height:props.size.height)
                     
                             case .location:
-                                Text("me")
+                                VirtualTour()
                                     .frame(width: props.size.width, height:props.size.height)
                                
                             case .utilities:
-                                Text("me")
+                                Text("\(project.convenience)")
                                     .frame(width: props.size.width, height:props.size.height)
                             case .related:
                                 Text("may")
@@ -108,6 +130,9 @@ struct ProjectDetailView: View {
                 }
               }
             }
+        .fullScreenCover(isPresented: $fullScreen360, content:{
+            VirtualTour()
+        })
             .scrollIndicators(.hidden)
             .padding()
             .navigationTitle(project.projectName)
@@ -136,8 +161,8 @@ struct ProjectDetailView: View {
                 }
             }
             .sheet(isPresented: $isPresentedPickCategorySheet){
-                PickProjectCategoryDetail(projectID: project.projectID)
-                    .presentationCornerRadius(50)
+                PickProjectCategoryDetail(projectID: project.projectID, isPresented: $isPresentedPickCategorySheet)
+//                    .presentationCornerRadius(50)
                     .presentationDetents([.medium, .large])
             }
             .fullScreenCover(isPresented: $viewModel.showImageViewer, content: {
@@ -353,8 +378,60 @@ struct ProjectDetailView: View {
                 }
             }
             .scrollDisabled(true)
+            .scrollClipDisabled()
             .listStyle(.grouped)
     }
+    //MARK: 360 tour tab
+    func VirtualTour() -> some View {
+        VStack {
+            ZStack(alignment: .top){
+                // Panorama viewer in the background
+                //TODO: khúc này thay hình
+                PanoramaViewer(image: SwiftUIPanoramaViewer.bindImage(
+                    .image360
+                )) { key in }
+                cameraMoved: { pitch, yaw, roll in
+                    rotationIndicator = yaw
+                }
+                
+                // Top overlay HStack
+                HStack {
+                    Text("Tổng quan: \(project.projectName)")
+                        .font(.footnote)
+                        .bold()
+                        .padding(.horizontal, 20)
+                        .padding(.vertical, 5)
+                        .background(Color.gray.mask(Capsule()))
+                        .foregroundColor(.white)
+                        .cornerRadius(5)
+                        .padding([.leading, .top], 10)
+                        .opacity(fullScreen360 ? 1 : 0 )// Positioned at the top
+                    Spacer()
+                    Image(systemName: "move.3d")
+                        .padding(.horizontal, 10)
+                        .padding(.vertical, 5)
+                }
+                .padding(.top, fullScreen360 ? 50 : 10)
+                .frame(width: UIScreen.main.bounds.width)
+                
+                // Bottom overlay CompassView
+                VStack {
+                    Spacer()
+                    CompassView()
+                        .frame(width: 50, height: 50)
+                        .rotationEffect(Angle(degrees: Double(rotationIndicator)))
+                        .padding(.bottom, 20) // Positioned at the bottom
+                }
+            }
+            .frame(width: UIScreen.main.bounds.width, height: fullScreen360 ? UIScreen.main.bounds.height : UIScreen.main.bounds.height / 3)
+            
+            Spacer()
+        }
+        .onLongPressGesture {
+            fullScreen360.toggle()
+        }
+    }
+
 }
 
 #Preview {

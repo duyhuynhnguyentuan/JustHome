@@ -16,7 +16,7 @@ struct Customer: Codable, Hashable, Identifiable {
     let nationality: String
     let placeofOrigin: String?
     let placeOfResidence: String?
-    let dateOfIssue: String?
+    let dateOfExpiry: String?
     let taxcode: String?
     let bankName: String?
     let bankNumber: String?
@@ -38,7 +38,7 @@ extension Customer {
         nationality: "Vietnam",
         placeofOrigin: nil,
         placeOfResidence: nil,
-        dateOfIssue: nil,
+        dateOfExpiry: nil,
         taxcode: nil,
         bankName: nil,
         bankNumber: nil,

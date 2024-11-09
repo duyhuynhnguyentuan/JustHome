@@ -9,7 +9,7 @@ import Foundation
 
 enum NetworkError: Error, Identifiable {
     case badRequest
-    case decodingError(Error) // Error does not conform to Equatable
+    case decodingError(Error)
     case invalidResponse
     case errorResponse(ErrorResponse)
 
@@ -43,7 +43,6 @@ extension NetworkError: Equatable {
         case (.errorResponse(let lhsError), .errorResponse(let rhsError)):
             return lhsError.message == rhsError.message
         case (.decodingError, .decodingError):
-            // You can't directly compare the `Error`, so return `false` or choose another strategy
             return false
         default:
             return false
@@ -90,7 +89,9 @@ struct HTTPClient {
         case .get:
             request.httpMethod = resource.method.name
         case .post(let data), .put(let data):
-            request.httpBody = data
+            if let data{
+              request.httpBody = data
+            }
             request.httpMethod = resource.method.name
         case .delete:
             request.httpMethod = resource.method.name
@@ -132,11 +133,16 @@ struct HTTPClient {
                   let result = try JSONDecoder().decode(resource.modelType, from: data)
                   return result
               } catch {
+                  print("DECODING ERROR: \(error)")
                   throw NetworkError.decodingError(error)
               }
     }
 }
 
+//MARK: Reponse messages
+struct MessageResponse: Codable {
+    let message: String?
+}
 struct ErrorResponse: Codable {
     let message: String?
 }

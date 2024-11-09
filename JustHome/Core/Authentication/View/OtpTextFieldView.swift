@@ -59,6 +59,6 @@ struct OtpTextFieldView: View {
         }
     }
 }
-#Preview {
-    OtpTextFieldView(phoneViewModel: PhoneViewModel(phoneNumber: "0808008"))
-}
+//#Preview {
+//    OtpTextFieldView(phoneViewModel: PhoneViewModel(phoneNumber: "0808008"))
+//}

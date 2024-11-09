@@ -36,9 +36,9 @@ struct JustHomeTests {
     
     @Test("Parse ISO date format to text")
      func parseISODateFormatToText() {
-        let ISOdateString = "2024-10-08T12:30:27"
-         if let normalDateTime = ISOdateString.iso8601ToNormalDate(){
-             #expect(normalDateTime == "2024-10-08")
+        let ISOdateString = "2024-10-23T14:53:20.9547933"
+         if let normalDateTime = ISOdateString.iso8601ToNormalDateTime(){
+             #expect(normalDateTime == "cc")
          }
     }
     

@@ -112,7 +112,7 @@ struct FeedView: View {
                                 Button{
                                     
                                 } label: {
-                                    Image(systemName: "heart.fill")
+                                    Image(systemName: "heart")
                                         .tint(Color.red)
                                 }
                             }

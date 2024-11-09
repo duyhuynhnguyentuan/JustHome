@@ -18,15 +18,23 @@ import Foundation
     case projects
     /// custom case name for project-category-detail
     case projectCategoryDetails
-
     /// endpoint for payments
     case payments
-    
+    /// endpoint for open for sale
+    case openForSales
+    ///endpoints for bookings
+    case bookings
+    ///endpoints for emails
+    case emails
+    /// endpoints for properties
+    case propertys
     /// Computed property to handle custom raw values for endpoints
     var rawValue: String {
         switch self {
         case .projectCategoryDetails:
             return "project-category-details"
+        case .openForSales:
+            return "open-for-sales"
         default:
             return String(describing: self)
         }

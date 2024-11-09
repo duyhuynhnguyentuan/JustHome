@@ -12,7 +12,7 @@ enum Nationality: String, CaseIterable, Identifiable {
     case japan = "Nhật Bản 🇯🇵"
     case thailand = "Thái Lan 🇹🇭"
     case india = "Ấn Độ 🇮🇳"
-    case malaysia = "Malaisie 🇲🇾"
+    case malaysia = "Malaysia 🇲🇾"
     case korea = "Hàn Quốc 🇰🇷"
     case australia = "Australia 🇦🇺"
     case russia = "Russia 🇷🇺"
@@ -32,7 +32,7 @@ enum Nationality: String, CaseIterable, Identifiable {
         case .india:
             return "Ấn Độ"
         case .malaysia:
-            return "Malaisie"
+            return "Malaysie"
         case .korea:
             return "Hàn Quốc"
         case .australia:
@@ -43,6 +43,7 @@ enum Nationality: String, CaseIterable, Identifiable {
     }
 }
 class RegistrationViewModel: ObservableObject {
+    @Published var error: NetworkError?
     @Published var showingOTPSheet: Bool = false
     @Published var email = ""
     @Published var password = ""
@@ -56,7 +57,34 @@ class RegistrationViewModel: ObservableObject {
     init(authService: AuthService) {
         self.authService = authService
     }
-    
+    @MainActor
+    func register() async throws{
+        do{
+            printUserInputs()
+            try await authService.register(body: RegisterBody(
+                email: email,
+                password: password,
+                confirmPass: confirmPassword,
+                fullName: fullName,
+                dateOfBirth: DateFormatter.yyyyMMdd.string(from: dateOfBirth),
+                phoneNumber: "+84\(phoneNumber)",
+                identityCardNumber: nil,
+                nationality: nationality.nationality,
+                placeOfOrigin: nil,
+                placeOfResidence: nil,
+                dateOfExpiry: nil,
+                taxcode: nil,
+                bankName: nil,
+                bankNumber: nil,
+                address: address))
+        }catch let error as NetworkError {
+            self.error = error
+            print("Error: \(error)")
+        } catch {
+            print("Unexpected error: \(error.localizedDescription)")
+        }
+
+    }
 }
 
 // TODO: Delete the below part later, for referencing purpose only

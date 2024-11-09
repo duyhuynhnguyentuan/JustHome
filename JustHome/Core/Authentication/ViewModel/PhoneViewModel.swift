@@ -12,19 +12,26 @@ class PhoneViewModel: ObservableObject {
       let referenceDate = Date(timeIntervalSinceNow:(1 * 5.0))
       @Published var verificationCode = ""
       @Published var verificationID = ""
-      @Published var phoneNumber = ""
-      @Published var countryCodeNumber = "+84"
-      @Published var country = ""
+//      @Published var phoneNumber = ""
+//      @Published var countryCodeNumber = "+84"
+      @Published var email = ""
       @Published var code = ""
       @Published var timerExpired = false
       @Published var timeStr = ""
-      @Published var timeRemaining = 60
+      @Published var timeRemaining = 90
+      @Published var error: NetworkError?
+      @Published private(set) var loadingState: LoadingState = .finished
+     let registrationViewModel: RegistrationViewModel
       var timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
-    init(phoneNumber: String){
-        self.phoneNumber = phoneNumber
+    let OTPService: OTPService
+    init(email: String, OTPService: OTPService, registrationViewModel: RegistrationViewModel){
+        self.email = email
+        self.OTPService = OTPService
+        self.registrationViewModel = registrationViewModel
     }
     //MARK: functions
-       func startTimer() {
+    func startTimer() async throws {
+        try await sendEmail()
            timerExpired = false
            timeRemaining = Constants.COUNTDOWN_TIMER_LENGTH
            self.timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
@@ -60,4 +67,34 @@ class PhoneViewModel: ObservableObject {
               verificationCode = String(verificationCode.prefix(upper))
           }
       }
+    @MainActor
+    func sendEmail() async throws{
+        do{
+            _ = try await OTPService.sendEmail(email: email)
+        }
+        catch let error as NetworkError {
+            self.error = error
+            print("Error: \(error)")
+        } catch {
+            print("Unexpected error: \(error.localizedDescription)")
+        }
+    }
+    
+    @MainActor
+    func verifyOTP(email: String, otp: String) async throws {
+        defer { loadingState = .finished }
+        do{
+            loadingState = .loading
+            let response = try await OTPService.verifyOTP(email: email, otp: otp)
+            if (response.message != nil) {
+                try await registrationViewModel.register()
+            }
+        }catch let error as NetworkError {
+            self.error = error
+            print("Error: \(error)")
+        } catch {
+            print("Unexpected error: \(error.localizedDescription)")
+        }
+    }
 }
+

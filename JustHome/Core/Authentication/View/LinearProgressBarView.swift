@@ -33,6 +33,6 @@ struct LinearProgressBarView: View {
     }
 }
 
-#Preview {
-    LinearProgressBarView(phoneViewModel: PhoneViewModel(phoneNumber: "029309209"))
-}
+//#Preview {
+//    LinearProgressBarView(phoneViewModel: PhoneViewModel(phoneNumber: "029309209"))
+//}

@@ -19,7 +19,7 @@ extension EnvironmentValues {
     }
 }
 
-// ResponsiveView to inject Properties into the environment
+
 struct ResponsiveView<Content: View>: View {
     var content: (Properties) -> Content
     init(@ViewBuilder content: @escaping (Properties) -> Content) {
@@ -36,7 +36,6 @@ struct ResponsiveView<Content: View>: View {
             let isMaxSplit = isSplit() && size.width < 400
             let isAdoptable = isIpad && (isLandscape ? !isMaxSplit : !isSplit())
 
-            // Use onAppear and onChange to update the state
             content(properties)
                 .environment(\.properties, properties)
                 .onAppear {

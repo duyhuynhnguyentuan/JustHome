@@ -17,7 +17,7 @@ class ProjectCategoryDetailService: ProjectCategoryDetailServiceProtocol {
         self.httpClient = httpClient
     }
     func loadProjectCategoryDetail(projectID: String) async throws -> [ProjectCategoryDetail] {
-        let loadProjectCategoryDetailRequest = JHRequest(endpoint: .projectCategoryDetails, pathComponents: [projectID])
+        let loadProjectCategoryDetailRequest = JHRequest(endpoint: .projectCategoryDetails, pathComponents: ["project", projectID])
         let loadProjectCategoryDetailResource = Resource(url: loadProjectCategoryDetailRequest.url!, modelType: [ProjectCategoryDetail].self)
         let response = try await httpClient.load(loadProjectCategoryDetailResource)
         return response

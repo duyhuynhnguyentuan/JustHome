@@ -7,6 +7,11 @@
 
 import Foundation
 
+struct ProjectResponse: Decodable, Encodable{
+    let totalPages: Int
+    let currentPage: Int
+    let projects: [Project]
+}
 struct Project: Identifiable, Encodable, Decodable, Hashable {
     let projectID: String
     let projectName: String

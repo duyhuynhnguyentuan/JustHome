@@ -8,6 +8,7 @@
 import Foundation
 
 //MARK: - Reponse and body model
+
 struct AuthResponse: Codable {
     let token: String
 }
@@ -26,24 +27,42 @@ struct RegisterBody: Codable {
     let password: String
     let confirmPass: String
     let fullName: String
-    let dateOfBirth: Date
+    let dateOfBirth: String
     let phoneNumber: String
     let identityCardNumber: String?
     let nationality: String
     let placeOfOrigin: String?
     let placeOfResidence: String?
-    let dateOfIssue: String
+    let dateOfExpiry: String?
     let taxcode: String?
     let bankName: String?
     let bankNumber: String?
     let address: String
 }
 
-
+struct CustomerResponse: Codable {
+    let customerID: String
+    let fullName: String
+    let dateOfBirth: String
+    let phoneNumber: String
+    let identityCardNumber: String?
+    let nationality: String
+    let placeofOrigin: String?
+    let placeOfResidence: String?
+    let dateOfExpiry: String?
+    let taxcode: String?
+    let bankName: String?
+    let bankNumber: String?
+    let address: String
+    let status: Bool
+    let accountID: String
+    let email: String
+}
 //MARK: - Main functionalities
 protocol AuthServiceProtocol {
     func login(body: LoginBody) async throws
     func register(body: RegisterBody) async throws
+    func updateToken(JWTtoken: String, FCMToken: String) async throws
 }
 
 class AuthService: AuthServiceProtocol, ObservableObject {
@@ -54,13 +73,20 @@ class AuthService: AuthServiceProtocol, ObservableObject {
         self.keychainService = keychainService
         self.httpClient = httpClient
         // Retrieve token from Keychain
-        if let token = keychainService.retrieveToken(forKey: "authToken") {
-            // Set isAuthenticated to true if a valid token exists
-            isAuthenticated = !token.isEmpty
-        }
+            if let token = keychainService.retrieveToken(forKey: "authToken") {
+                // Set isAuthenticated to true if a valid token exists
+                isAuthenticated = !token.isEmpty
+            }
+        
                 
     }
-    
+    @MainActor
+    func getCustomer(accountId: String) async throws {
+        let getCustomerRequest = JHRequest(endpoint: .customers, pathComponents: ["account", accountId])
+        let getCustomerResource = Resource(url: getCustomerRequest.url!, modelType: CustomerResponse.self)
+        let getCustomerResponse = try await httpClient.load(getCustomerResource)
+        await keychainService.save(token: getCustomerResponse.customerID, forKey: "customerID")
+    }
     @MainActor
     func tokenParser(token: String) async throws{
         print("tokenParser has received token: \(token)")
@@ -72,13 +98,13 @@ class AuthService: AuthServiceProtocol, ObservableObject {
         let tokenParserResource = Resource(url: tokenParserRequest.url!, modelType: TokenParserResonse.self)
         let tokenParserResponse = try await httpClient.load(tokenParserResource)
         print("DEBUG: Token parser response: \(tokenParserResponse.email)")
-        keychainService.save(token: tokenParserResponse.accountID, forKey: "accountID")
-        keychainService.save(token: tokenParserResponse.email, forKey: "email")
-        keychainService.save(token: tokenParserResponse.roleName, forKey: "roleName")
-        
+//        await keychainService.save(token: tokenParserResponse.accountID, forKey: "accountID")
+//        await keychainService.save(token: tokenParserResponse.email, forKey: "email")
+//        await keychainService.save(token: tokenParserResponse.roleName, forKey: "roleName")
+        try await getCustomer(accountId: tokenParserResponse.accountID)
         
     }
-    
+    //TODO: add get customer buy id
     @MainActor
     func login(body: LoginBody) async throws{
         guard let jsonData = try? JSONEncoder().encode(body) else {
@@ -89,12 +115,17 @@ class AuthService: AuthServiceProtocol, ObservableObject {
         let authResource = Resource(url: authRequest.url!,method: .post(jsonData), modelType: AuthResponse.self)
         let result = try await httpClient.load(authResource)
         if !result.token.isEmpty {
-            isAuthenticated = true
+//            isAuthenticated = true
             print("DEBUG: Receiving token: \(result.token)")
         }
-        keychainService.save(token: result.token, forKey: "authToken")
-        try await tokenParser(token: result.token)
         
+        await keychainService.save(token: result.token, forKey: "authToken");
+        try await tokenParser(token: result.token);
+        if let fcmToken = keychainService.retrieveToken(forKey: "fcmToken"), !fcmToken.isEmpty {
+                   try await updateToken(JWTtoken: result.token, FCMToken: fcmToken)
+               }
+        ///đợi mấy cái trên xong hết r mới authenticate
+        isAuthenticated = true
     }
     
     @MainActor
@@ -104,18 +135,29 @@ class AuthService: AuthServiceProtocol, ObservableObject {
             return
         }
         let customerRegisterRequest = JHRequest.listCustomersRequest
-        let customerRegisterResource = Resource(url: customerRegisterRequest.url!, method: .post(jsonData),modelType: String.self)
+        let customerRegisterResource = Resource(url: customerRegisterRequest.url!, method: .post(jsonData),modelType: MessageResponse.self)
         print(customerRegisterRequest)
         let result = try await httpClient.load(customerRegisterResource)
         print("DEBUG: Register Result: \(result)")
-        try await login(body: LoginBody(emailOrPhone: body.email, password: body.password))
-        
+        if result.message != nil {
+            try await login(body: LoginBody(emailOrPhone: body.email, password: body.password))
+        }
     }
     
     @MainActor
+    func updateToken(JWTtoken: String, FCMToken: String) async throws {
+        let updateFCMRequest = JHRequest(endpoint: .customers, pathComponents: ["device-token"], queryParameters: [
+            URLQueryItem(name: "tokenJWT", value: JWTtoken),
+            URLQueryItem(name: "deviceToken", value: FCMToken)
+        ])
+        let updateFCMResource = Resource(url: updateFCMRequest.url!,method: .put(nil), modelType: MessageResponse.self)
+        let result = try await httpClient.load(updateFCMResource)
+        print("DEBUG: Update FCM Result: \(result.message ?? "empty message")")
+    }
+    @MainActor
     func logout() {
         self.isAuthenticated = false
-        keychainService.clearAllKeys()
+            keychainService.clearAllKeys()
     }
 }
 

@@ -11,27 +11,31 @@ import Security
 class KeychainService {
     static let shared = KeychainService()
     
-    func save(token: String, forKey key: String) {
+    func save(token: String, forKey key: String) async {
         let data = token.data(using: .utf8)!
+        
+        print("DEBUG: Saving token \(token) for key \(key)")  // Print the token being set
+        
         let query: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,
             kSecAttrAccount as String: key,
             kSecValueData as String: data
         ]
         
-        // Remove any existing item
-        SecItemDelete(query as CFDictionary)
-        
-        // Add the new item
-        let status = SecItemAdd(query as CFDictionary, nil)
-        
-        if status == errSecSuccess {
-            print("DEBUG: Successfully saved token for key: \(key)")
-        } else {
-            print("DEBUG: Failed to save token for key: \(key). Error: \(status)")
+        // Remove any existing item asynchronously
+        await withCheckedContinuation { continuation in
+            SecItemDelete(query as CFDictionary)
+            let status = SecItemAdd(query as CFDictionary, nil)
+            
+            if status == errSecSuccess {
+                print("DEBUG: Successfully saved token for key: \(key)")
+            } else {
+                print("DEBUG: Failed to save token for key: \(key). Error: \(status)")
+            }
+            
+            continuation.resume()
         }
     }
-    
     func retrieveToken(forKey key: String) -> String? {
         let query: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,

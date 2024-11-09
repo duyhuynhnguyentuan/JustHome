@@ -69,10 +69,10 @@ class FeedViewModel: ObservableObject {
         do {
             let result = try await projectsService.loadProjects(projectName: projectName)
             isSearching = false
-            if result.isEmpty {
+            if result.projects.isEmpty {
                 noResult = true
             } else {
-                self.projects = result
+                self.projects = result.projects
                 noResult = false
             }
         } catch let error as NetworkError {
@@ -100,7 +100,11 @@ class FeedViewModel: ObservableObject {
         
         do {
             let projects = try await projectsService.loadProjects(page: page)
-            self.projects.append(contentsOf: projects)
+            self.projects.append(contentsOf: projects.projects)
+            if projects.totalPages < page {
+                page = projects.totalPages
+                hasReachedEnd = true
+            }
         } catch let error as NetworkError {
             switch error {
             case .errorResponse(let response):

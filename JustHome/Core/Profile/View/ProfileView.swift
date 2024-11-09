@@ -57,15 +57,23 @@ struct ProfileView: View {
                     List {
                         // General
                         Section {
-                            Text("Sửa thông tin cá nhân")
-                            Text("Thông tin căn cước")
+                            NavigationLink{
+                                PersonalInfoView()
+                            }label: {
+                                Text("Sửa thông tin căn cước và thông tin ngân hàng")
+                            }
+                            Text("Thông tin cá nhân")
                         } header: {
                             Label("General", systemImage: "person.fill")
                         }
 
                         // Privacy and safety
                         Section {
-                            Text("Thông báo")
+                            NavigationLink{
+                                SettingsView()
+                            }label: {
+                                Text("Thông báo")
+                            }
                             Text("Sử dụng FaceID")
                         } header: {
                             Label("Privacy & Safety", systemImage: "lock.fill")

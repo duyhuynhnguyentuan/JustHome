@@ -73,7 +73,6 @@ struct RegistrationView: View {
                     
                 }
                 Button {
-                    viewModel.printUserInputs()
                     viewModel.showingOTPSheet.toggle()
                 } label: {
                     Text("Đăng kí")
@@ -98,8 +97,38 @@ struct RegistrationView: View {
                 .padding(.vertical, 16)
             }
             .sheet(isPresented: $viewModel.showingOTPSheet) {
-                ActivateAccountView(phoneViewModel: PhoneViewModel(phoneNumber: viewModel.phoneNumber))
+                ActivateAccountView(phoneViewModel: PhoneViewModel(email: viewModel.email, OTPService: OTPService(httpClient: HTTPClient()), registrationViewModel: viewModel))
                     .interactiveDismissDisabled()
+                
+            }
+            .alert(item: $viewModel.error) { error in
+                // Handle alert cases
+                switch error {
+                case .badRequest:
+                    return Alert(
+                        title: Text("Bad Request"),
+                        message: Text("Unable to perform the request."),
+                        dismissButton: .default(Text("OK"))
+                    )
+                case .decodingError(let decodingError):
+                    return Alert(
+                        title: Text("Decoding Error"),
+                        message: Text(decodingError.localizedDescription),
+                        dismissButton: .default(Text("OK"))
+                    )
+                case .invalidResponse:
+                    return Alert(
+                        title: Text("Invalid Response"),
+                        message: Text("The server response was invalid."),
+                        dismissButton: .default(Text("OK"))
+                    )
+                case .errorResponse(let errorResponse):
+                    return Alert(
+                        title: Text("Lỗi"),
+                        message: Text(errorResponse.message ?? "An unknown error occurred."),
+                        dismissButton: .default(Text("OK"))
+                    )
+                }
             }
         }
     }

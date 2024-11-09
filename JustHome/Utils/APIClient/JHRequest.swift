@@ -123,5 +123,6 @@ extension JHRequest {
     static let listCustomersRequest = JHRequest(endpoint: .customers)
     static let authRequest = JHRequest(endpoint: .auth)
     static let projectsRequest = JHRequest(endpoint: .projects)
+    static let bookingsRequest = JHRequest(endpoint: .bookings)
 }
 

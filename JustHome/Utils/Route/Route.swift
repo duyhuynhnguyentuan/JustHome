@@ -11,6 +11,12 @@ import SwiftUI
 enum Route {
     //route for feed detail view aka project detail view
     case projects(project: Project)
+    //booking tab view aka activity View
+    case activity
+    // route for activity detail view aka booking detail view (type String because of booking status)
+    case bookings(bookingID: String)
+    // route to real time
+    case realTime(projectCategoryDetailID: String)
 }
 
 extension Route {
@@ -28,6 +34,12 @@ extension Route: Hashable {
         switch (lhs, rhs){
         case (.projects(let lhsItem), .projects(let rhsItem)):
             return lhsItem == rhsItem
+        case (.activity, .activity):
+            return true
+        case (.bookings(let lhsItem), .bookings(let rhsItem)):
+            return lhsItem == rhsItem
+        case (.realTime(let lhsItem), .realTime(let rhsItem)):
+            return lhsItem == rhsItem
         default:
             return false
         }
@@ -40,6 +52,14 @@ extension Route: View {
         case .projects(let project):
             ProjectDetailView(project: project)
                 .navigationBarBackButtonHidden()
+        case .activity:
+            ActivityView()
+                .navigationBarBackButtonHidden()
+        case .bookings(let bookingID):
+            BookingDetailView(bookingID: bookingID)
+        case .realTime(let projectCategoryDetailID):
+            RealTimeView(categoryDetailID: projectCategoryDetailID)
+                .toolbar(.hidden, for: .tabBar)
         }
     }
 }

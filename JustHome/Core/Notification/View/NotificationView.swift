@@ -9,7 +9,7 @@ import SwiftUI
 
 struct NotificationView: View {
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        RealTimeView(categoryDetailID: "99bf357c-ff7f-45cf-b187-914a816189cc")
     }
 }
 

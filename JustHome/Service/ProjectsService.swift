@@ -8,7 +8,7 @@
 import Foundation
 
 protocol ProjectsServiceProtocol {
-    func loadProjects(projectName: String?, page: Int?) async throws -> [Project]
+    func loadProjects(projectName: String?, page: Int?) async throws -> ProjectResponse
     func loadProject(withId id: String) async throws -> Project
 }
 
@@ -20,7 +20,7 @@ class ProjectsService: ProjectsServiceProtocol {
     }
     
     @MainActor
-    func loadProjects(projectName: String? = nil, page: Int? = nil) async throws -> [Project] {
+    func loadProjects(projectName: String? = nil, page: Int? = nil) async throws -> ProjectResponse {
         var queryItems: [URLQueryItem] = []
         
         // Add project name query if provided
@@ -37,7 +37,7 @@ class ProjectsService: ProjectsServiceProtocol {
         let loadProjectsRequest = JHRequest(endpoint: .projects, queryParameters: queryItems)
         
         // Define the resource
-        let loadProjectsResource = Resource(url: loadProjectsRequest.url!, method: .get, modelType: [Project].self)
+        let loadProjectsResource = Resource(url: loadProjectsRequest.url!, method: .get, modelType: ProjectResponse.self)
         
         // Perform the network request
         let resultProjects = try await httpClient.load(loadProjectsResource)
