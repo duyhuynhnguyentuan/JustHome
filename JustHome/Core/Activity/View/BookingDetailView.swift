@@ -90,65 +90,101 @@ struct BookingDetailView: View {
                                   .foregroundStyle(.yellow)
                           }
                         }
-                    case .dadatcho:
-                        Text("Đã đặt cọc vào lúc \(viewModel.booking?.depositedTimed ?? "N/A")")
-                            .font(.caption2)
-                            .foregroundStyle(.secondary)
-                        Text("Thời gian check-in: \(viewModel.openForSaleDetail?.checkinDate ?? "N/A")")
-                            .font(.caption)
-                            .foregroundStyle(.yellow)
-                        //Show button as "Chưa đến thời gian checkin" with grey background if curent time is not equal or later checkin Date, else "Bạn có thể vào checkin" with greeen background
-                        if let checkinDateString = viewModel.openForSaleDetail?.checkinDate,
-                           let checkinDate = DateFormatter.yyyyMMddHHmmss.date(from: checkinDateString) {
-                            VStack {
-                                // Button for check-in status
-                                if Date() >= checkinDate {
-                                    Button("Check-in ngay") {
-                                        Task{
-                                           let response = try await viewModel.checkingIn(by: bookingID)
-                                            if response?.message != nil {
-                                                //router push to screen
-                                                routerManager.push(to: .realTime(projectCategoryDetailID: viewModel.booking!.projectCategoryDetailID))
+                    case .dadatcho, .dacheckin, .dachonsanpham, .dakythoathuandatcoc, .dahuy:
+                        if viewModel.openForSaleDetail?.saleType == "Offline" {
+                            // Show only a disabled button with "Được chọn bởi staff"
+                            Button("Được chọn bởi Staff") {}
+                                .disabled(true)
+                                .padding()
+                                .background(Color.gray)
+                                .foregroundColor(.white)
+                                .cornerRadius(8)
+                        } else {
+                            // Handle each case as per the original logic
+                            switch status {
+                            case .dadatcho:
+                                Text("Đã đặt cọc vào lúc \(viewModel.booking?.depositedTimed ?? "N/A")")
+                                    .font(.caption2)
+                                    .foregroundStyle(.secondary)
+                                Text("Thời gian check-in: \(viewModel.openForSaleDetail?.checkinDate ?? "N/A")")
+                                    .font(.caption)
+                                    .foregroundStyle(.yellow)
+                                if let checkinDateString = viewModel.openForSaleDetail?.checkinDate,
+                                   let checkinDate = DateFormatter.yyyyMMddHHmmss.date(from: checkinDateString) {
+                                    VStack {
+                                        if Date() < checkinDate {
+                                            Button("Chưa đến thời gian checkin") {}
+                                                .padding()
+                                                .background(Color.gray)
+                                                .foregroundColor(.white)
+                                                .cornerRadius(8)
+                                        } else if Date() < Calendar.current.date(byAdding: .day, value: 1, to: checkinDate)! {
+                                            Button("Check-in ngay") {
+                                                Task {
+                                                    let response = try await viewModel.checkingIn(by: bookingID)
+                                                    if response?.message != nil {
+                                                        routerManager.push(to: .realTime(projectCategoryDetailID: viewModel.booking!.projectCategoryDetailID))
+                                                    }
+                                                }
                                             }
+                                            .padding()
+                                            .background(Color.green)
+                                            .foregroundColor(.white)
+                                            .cornerRadius(8)
+                                        } else {
+                                            Button("Đã quá thời gian checkin, không thể chọn căn") {}
+                                                .padding()
+                                                .background(Color.red)
+                                                .foregroundColor(.white)
+                                                .cornerRadius(8)
                                         }
                                     }
-                                    .padding()
-                                    .background(Color.green)
-                                    .foregroundColor(.white)
-                                    .cornerRadius(8)
                                 } else {
-                                    Button("Chưa đến thời gian checkin") {
-                                    
-                                    }
-                                    .padding()
-                                    .background(Color.gray)
-                                    .foregroundColor(.white)
-                                    .cornerRadius(8)
+                                    Text("Ngày checkin không hợp lệ.")
+                                        .foregroundColor(.red)
                                 }
+                            case .dacheckin:
+                                if let checkinDateString = viewModel.openForSaleDetail?.checkinDate,
+                                   let checkinDate = DateFormatter.yyyyMMddHHmmss.date(from: checkinDateString) {
+                                    VStack {
+                                        if Date() < Calendar.current.date(byAdding: .day, value: 1, to: checkinDate)! {
+                                            Button {
+                                                routerManager.push(to: .realTime(projectCategoryDetailID: viewModel.booking!.projectCategoryDetailID))
+                                            } label: {
+                                                Text("Vào chọn căn ngay")
+                                                    .bold()
+                                                    .modifier(JHButtonModifier())
+                                            }
+                                        } else {
+                                            Button("Đã quá thời gian checkin") {}
+                                                .padding()
+                                                .background(Color.red)
+                                                .foregroundColor(.white)
+                                                .cornerRadius(8)
+                                        }
+                                    }
+                                } else {
+                                    Text("Ngày checkin không hợp lệ.")
+                                        .foregroundColor(.red)
+                                }
+                            case .dachonsanpham, .dakythoathuandatcoc:
+                                Button {
+                                } label: {
+                                    Label("Vui lòng vào trang hợp đồng để xem thông tin", systemImage: "info.circle")
+                                }
+                                .padding()
+                                .background(Color.red)
+                                .foregroundColor(.white)
+                                .cornerRadius(8)
+                            case .dahuy:
+                                Text("Booking đã tự động bị hủy")
+                                    .foregroundStyle(.red)
+                                    .font(.caption)
+                                    .foregroundStyle(.secondary)
+                            default:
+                                EmptyView()
                             }
-                        } else {
-                            Text("Ngày checkin không hợp lệ.")
-                                .foregroundColor(.red)
                         }
-                    case .dacheckin:
-                        Button{
-                            routerManager.push(to: .realTime(projectCategoryDetailID: viewModel.booking!.projectCategoryDetailID))
-                        }label: {
-                            Text("Vào chọn căn ngay")
-                                .bold()
-                                .modifier(JHButtonModifier())
-                        }
-                        
-                    //TODO: Hiện nút đặt tới trang đặt cọc
-                    case .dachonsanpham:
-                        EmptyView()
-                    case .dakythoathuandatcoc:
-                        EmptyView()
-                    case .dahuy:
-                        Text("Booking đã tự động bị hủy")
-                            .foregroundStyle(.red)
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
                     }
                     VStack(alignment: .leading, spacing: 15){
                         Divider()
@@ -168,9 +204,14 @@ struct BookingDetailView: View {
                                      }label: {
                                          HStack(alignment: .top){
                                              Image(.pdfIcon)
-                                             Text("Phiếu đặt chỗ.pdf")
-                                                 .font(.title3.bold())
-                                                 .foregroundStyle(.primaryText)
+                                             VStack(alignment: .leading){
+                                                 Text("Mẫu thỏa thuận đặt cọc.pdf")
+                                                     .font(.title3.bold())
+                                                     .foregroundStyle(.primaryText)
+                                                 Text("Nhấn vào để xem chi tiết")
+                                                     .font(.callout)
+                                                     .foregroundStyle(.gray)
+                                             }
                                              Spacer()
                                          }
                                          .padding()
@@ -196,7 +237,7 @@ struct BookingDetailView: View {
                     }
                         .padding(.vertical)
 //                    Spacer()
-                                //TODO: Add if status = .
+                           
                     
                           } else {
                               Text("Loading status...")
@@ -295,19 +336,17 @@ struct BookingDetailView: View {
                       )
               )
               .padding(.horizontal, 5)
-              //TODO: Adding props here
               .frame(maxWidth: .infinity)
        }
     @ViewBuilder
     func OpenForSalesDetailView() -> some View {
         VStack(alignment: .leading ,spacing: 5){
-            Text("Quyết định: \(viewModel.openForSaleDetail?.decisionName ?? "N/A")")
+            Text("\(viewModel.openForSaleDetail?.decisionName ?? "N/A")")
                 .font(.title2.bold())
             Text("Hình thức: \(viewModel.openForSaleDetail?.saleType ?? "N/A")")
                 .font(.headline.italic())
             Text("Số tiền đặt giữ chỗ: \(Decimal(string: viewModel.openForSaleDetail?.reservationPrice ?? "") ?? Decimal(0), format: .currency(code: "VND"))")
             Text("Mô tả: \(viewModel.openForSaleDetail?.description ?? "N/A")")
-            //TODO CHECK if checkin date = noW() then hiện nút check in
             HStack{
                 Spacer()
             }
@@ -324,7 +363,6 @@ struct BookingDetailView: View {
                    )
            )
               .padding(.horizontal, 5)
-           //TODO: Adding props here
            .frame(maxWidth: .infinity)
     }
     //generate QR

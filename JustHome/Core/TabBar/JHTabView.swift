@@ -36,7 +36,7 @@ struct JHTabView: View {
                     Image(systemName: selectedTab == 3 ? "bell.fill" : "bell")
                 }
                 .tag(3)
-                .badge(3)
+//                .badge(3)
             
             ProfileView(authService: authService)
                 .tabItem {

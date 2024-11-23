@@ -31,13 +31,13 @@ extension AppDelegate: UNUserNotificationCenterDelegate{
     ///   - response: the response from the notification (which includes infos like: link,title,...)
     func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse) async {
         
-//        if let deeplink = response.notification.request.content.userInfo["link"] as? String,
-//           let url = URL(string: deeplink) {
-//            print("Received deeplink url: \(url)")
-//            Task{
-//                await app?.handleDeeplinking(from: url)
-//            }
-//        }
+        if let deeplink = response.notification.request.content.userInfo["link"] as? String,
+           let url = URL(string: deeplink) {
+            print("Received deeplink url: \(url)")
+            Task{
+                await app?.handleDeeplinking(from: url)
+            }
+        }
     }
     //this with the will present parameter is used to handle notification whilst your app is open
     func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification) async -> UNNotificationPresentationOptions {
@@ -59,7 +59,7 @@ extension AppDelegate: MessagingDelegate{
              }
          }
          #if DEBUG
-        //TODO: add fcm token to customer
+       
         print("FCM Token: \(fcmToken ?? "")")
         #endif
         
@@ -82,7 +82,10 @@ struct JustHomeApp: App {
                 .onOpenURL { url in
                     let stripeHandled = StripeAPI.handleURLCallback(with: url)
                            if (!stripeHandled) {
-                             // This was not a Stripe url – handle the URL normally as you would
+                               Task{
+                                   print(url)
+                                   await handleDeeplinking(from: url)
+                               }
                            }
                 }
         }
@@ -90,6 +93,14 @@ struct JustHomeApp: App {
 }
 
 private extension JustHomeApp {
+    //hnadle deeplink
+    func handleDeeplinking(from url: URL) async {
+        let routeFinder = RouteFinder()
+        if let route = await routeFinder.find(from: url, projectService: ProjectsService(httpClient: HTTPClient())) {
+            routerManager.push(to: route)
+        }
+    }
+    //clear all the keychain
     func clearKeychainIfWillUnistall() {
     let freshInstall = !UserDefaults.standard.bool(forKey: "alreadyInstalled")
      if freshInstall {

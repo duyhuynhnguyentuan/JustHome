@@ -39,6 +39,7 @@ struct IdentityCardTextRecognizing: View {
                     } else {
                         Text("Hãy kiểm tra thông tin và điền thông tin ngân hàng")
                             .font(.title.bold())
+                            .multilineTextAlignment(.center)
                         Button{
                             scanComplete = false
                         }label: {
@@ -49,10 +50,10 @@ struct IdentityCardTextRecognizing: View {
                         VStack(alignment: .leading){
                             Text("Số CCCD: \(details.cardNumber ?? "N/A")")
                             Text("Ngày hết hạn: \(details.expiryDate ?? "N/A")")
-                            Text("Quê quán: \(details.placeOfOrigin ?? "N/A")")
                             Text("Nơi thường trú: \(details.placeOfResidence ?? "N/A")")
-                                .lineLimit(nil)  // Allow multiple lines
-                                .truncationMode(.tail)
+                                .fixedSize(horizontal: false, vertical: true)
+                                   .lineLimit(nil)
+                            Text("Quê quán: \(details.placeOfOrigin ?? "N/A")")
                             // New Text Fields
                             TextField("Bank Number", text: $bankNumber)
                                 .textFieldStyle(RoundedBorderTextFieldStyle())
@@ -81,6 +82,15 @@ struct IdentityCardTextRecognizing: View {
                         .font(.title2.bold())
                         .padding()
                         .background(Color.blue)
+                        .foregroundColor(.white)
+                        .clipShape(RoundedRectangle(cornerRadius: 10))
+                        Divider()
+                        Button("Hủy thay đổi") {
+                            dismiss()
+                        }
+                        .font(.title2.bold())
+                        .padding()
+                        .background(Color.red)
                         .foregroundColor(.white)
                         .clipShape(RoundedRectangle(cornerRadius: 10))
                     }

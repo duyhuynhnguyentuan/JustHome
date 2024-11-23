@@ -118,7 +118,7 @@ struct ActivateAccountView: View {
                     Spacer()
                 }
                 .navigationBarBackButtonHidden(true)
-                .navigationBarTitle(LocalizedStringKey("activate.account"), displayMode: .inline)
+                .navigationBarTitle(LocalizedStringKey("Register"), displayMode: .inline)
                 .alert(item: $phoneViewModel.error) { error in
                     // Handle alert cases
                     switch error {

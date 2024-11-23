@@ -38,6 +38,8 @@ class RealTimeViewModel: ObservableObject {
     @Published var selectedZoneName: String = ""
     @Published var selectedBlockName: String = ""
     @Published var selectedNumFloor: Int? = nil
+    @Published private(set) var loadingState: LoadingState = .idle
+
     private var hubConnection: HubConnection?
     var filteredProperties: [Property] {
         properties.filter { property in
@@ -50,6 +52,9 @@ class RealTimeViewModel: ObservableObject {
             // Apply floor filter
             (selectedNumFloor == nil || property.numFloor == selectedNumFloor)
         }
+    }
+    var isCurrentUserDeposited: Bool {
+        depositedBooking?.customerID == customerID
     }
     var propertyStatusCounts: [PropertyFilter: Int] {
         var counts = [PropertyFilter: Int]()
@@ -120,7 +125,11 @@ class RealTimeViewModel: ObservableObject {
     
     @MainActor
     func selectProperty(by propertyId: String) async throws -> MessageResponse? {
+        defer{
+            loadingState = .finished
+        }
         do{
+            loadingState = .loading
           let response = try await propertyService.selectProperty(by: propertyId, by: customerID)
             return response
         }catch let error as NetworkError{

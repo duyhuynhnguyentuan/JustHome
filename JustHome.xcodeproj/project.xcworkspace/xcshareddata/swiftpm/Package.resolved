@@ -1,5 +1,5 @@
 {
-  "originHash" : "1595c5080e44c1a39b937fc383ef049dc50872a376da14bcef7b89f3facb075f",
+  "originHash" : "b91c6dfe76b365f9d685715dbe0567ad47b9ff4e88dc49de797a093dbbfb6cbb",
   "pins" : [
     {
       "identity" : "abseil-cpp-binary",
@@ -8,6 +8,15 @@
       "state" : {
         "revision" : "194a6706acbd25e4ef639bcaddea16e8758a3e27",
         "version" : "1.2024011602.0"
+      }
+    },
+    {
+      "identity" : "alamofire",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Alamofire/Alamofire.git",
+      "state" : {
+        "revision" : "e16d3481f5ed35f0472cb93350085853d754913f",
+        "version" : "5.10.1"
       }
     },
     {
@@ -141,6 +150,15 @@
       "location" : "https://github.com/martinmaly21/SoundManager",
       "state" : {
         "revision" : "9b0100240d5364b545c1be3f610987de200f4780"
+      }
+    },
+    {
+      "identity" : "stepperview",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/badrinathvm/StepperView.git",
+      "state" : {
+        "revision" : "c66fb84c640fbc312f4eead0b7ae2a77f93e0839",
+        "version" : "1.6.7"
       }
     },
     {

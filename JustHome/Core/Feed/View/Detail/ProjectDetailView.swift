@@ -146,18 +146,12 @@ struct ProjectDetailView: View {
                     }
                 }
                 ToolbarItemGroup(placement: .topBarTrailing) {
-                    Button{
-                        
-                    }label: {
-                        Image(systemName: "square.and.arrow.up")
-                            .foregroundStyle(.tertiaryGreen)
-                    }
-                    Button{
-                        
-                    }label: {
-                        Image(systemName: "heart")
-                            .foregroundStyle(.red)
-                    }
+                        if let link = Route.buildDeepLink(from: .projects(project: project)){
+                            ShareLink(item: link) {
+                                Image(systemName: "square.and.arrow.up")
+                                    .foregroundStyle(.tertiaryGreen)
+                            }
+                        }
                 }
             }
             .sheet(isPresented: $isPresentedPickCategorySheet){

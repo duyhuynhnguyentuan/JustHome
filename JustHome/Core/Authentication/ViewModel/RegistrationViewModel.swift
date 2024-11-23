@@ -60,7 +60,6 @@ class RegistrationViewModel: ObservableObject {
     @MainActor
     func register() async throws{
         do{
-            printUserInputs()
             try await authService.register(body: RegisterBody(
                 email: email,
                 password: password,
@@ -87,23 +86,4 @@ class RegistrationViewModel: ObservableObject {
     }
 }
 
-// TODO: Delete the below part later, for referencing purpose only
-extension RegistrationViewModel {
-    private var dateFormatter: DateFormatter {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "yyyy-MM-dd"
-        return formatter
-    }
 
-    func printUserInputs() {
-        print("Email: \(email)")
-        print("Password: \(password)")
-        print("Confirm Password: \(confirmPassword)")
-        print("Full Name: \(fullName)")
-        print("Nationality: \(nationality.nationality)")
-        print("Date of Birth: \(DateFormatter.yyyyMMdd.string(from: dateOfBirth))")
-        print("Date of Birth (Formatted): \(DateFormatter.yyyyMMddHHmmss.string(from: dateOfBirth))")
-        print("Phone Number: +84\(phoneNumber)")
-        print("Address: \(address)")
-    }
-}

@@ -9,7 +9,9 @@ import SwiftUI
 
 struct NotificationView: View {
     var body: some View {
-        RealTimeView(categoryDetailID: "99bf357c-ff7f-45cf-b187-914a816189cc")
+        VStack{
+            
+        }
     }
 }
 

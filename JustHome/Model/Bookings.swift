@@ -70,7 +70,7 @@ extension Bookings {
             return .blue
         case "Đã chọn sản phẩm":
             return .orange
-        case "Đã ký thỏa thận đặt cọc":
+        case "Đã ký thỏa thuận đặt cọc":
             return .purple
         case "Đã hủy":
             return .red

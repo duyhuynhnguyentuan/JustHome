@@ -49,34 +49,43 @@ struct PickProjectCategoryDetail: View {
             }
             VStack(spacing: 10){
                 ForEach(viewModel.projectCategoryDetail, id: \.id){ projectCategoryDetail in
-                    if (projectCategoryDetail.openForSale){
-                        Text(projectCategoryDetail.propertyCategoryName)
-                            .font(.title2)
-                            .bold()
-                            .padding()
-                            .background(
-                                RoundedRectangle(cornerRadius: 12)
-                                    .fill(viewModel.selectedCategoryDetail == projectCategoryDetail ? Color.primaryGreen.opacity(0.4) : Color.clear )
-                                    .stroke(Color.gray,lineWidth: 3)
-                                    .frame(width: props.size.width * 0.95)
-                            )
-                            .onTapGesture {
-                                withAnimation(.easeInOut){
-                                    viewModel.selectedCategoryDetail = projectCategoryDetail
+                    if (projectCategoryDetail.openForSale == "Giữ chỗ" || projectCategoryDetail.openForSale == "Mua trực tiếp"){
+                        VStack(spacing: 0){
+                            Text(projectCategoryDetail.openForSale)
+                                .font(.caption2)
+                            Text(projectCategoryDetail.propertyCategoryName)
+                                .font(.title2)
+                                .bold()
+                        }
+                                .padding()
+                                .background(
+                                    RoundedRectangle(cornerRadius: 12)
+                                        .fill(viewModel.selectedCategoryDetail == projectCategoryDetail ? Color.primaryGreen.opacity(0.4) : projectCategoryDetail.statusColor)
+                                        .stroke(Color.gray,lineWidth: 3)
+                                        .frame(width: props.size.width * 0.95)
+                                )
+                                .onTapGesture {
+                                    withAnimation(.easeInOut){
+                                        viewModel.selectedCategoryDetail = projectCategoryDetail
+                                    }
                                 }
-                            }
+                        
                     }else{
-                        Text(projectCategoryDetail.propertyCategoryName)
-                            .font(.title2)
-                            .foregroundStyle(Color.secondary)
-                            .bold()
-                            .padding()
-                            .background(
-                                RoundedRectangle(cornerRadius: 12)
-                                    .fill(Color.gray.opacity(0.4))
-                                    .stroke(Color.gray,lineWidth: 3)
-                                    .frame(width: props.size.width * 0.95)
-                            )
+                        VStack(spacing: 0){
+                            Text(projectCategoryDetail.openForSale)
+                                .font(.caption2)
+                            Text(projectCategoryDetail.propertyCategoryName)
+                                .font(.title2)
+                        }
+                                .foregroundStyle(Color.secondary)
+                                .bold()
+                                .padding()
+                                .background(
+                                    RoundedRectangle(cornerRadius: 12)
+                                        .fill(Color.gray.opacity(0.4))
+                                        .stroke(Color.gray,lineWidth: 3)
+                                        .frame(width: props.size.width * 0.95)
+                                )
                     }
                 }
                 if viewModel.loadingState == .finished {

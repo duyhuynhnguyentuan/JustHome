@@ -40,7 +40,7 @@ class BookingsService: BookingsServiceProtocol {
         ])
         let createBookingResource = Resource(url: createBookingRequest.url!, method: .post(nil), modelType: CreateBookingResponse.self)
         let createBookingResponse = try await httpClient.load(createBookingResource)
-        if createBookingResponse.message == "Create Booking Successfully" {
+        if !createBookingResponse.message.isEmpty {
             return createBookingResponse
         }else{
             throw NetworkError.errorResponse(ErrorResponse(message: createBookingResponse.message))

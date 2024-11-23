@@ -104,7 +104,6 @@ class AuthService: AuthServiceProtocol, ObservableObject {
         try await getCustomer(accountId: tokenParserResponse.accountID)
         
     }
-    //TODO: add get customer buy id
     @MainActor
     func login(body: LoginBody) async throws{
         guard let jsonData = try? JSONEncoder().encode(body) else {

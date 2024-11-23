@@ -13,7 +13,7 @@ struct Property: Codable, Hashable {
     let propertyID: String
     let propertyCode: String
     let view: String
-    let priceSold: Int
+    let priceSold: Double
     let status: String
     let unitTypeID: String?
     let bathRoom: Int

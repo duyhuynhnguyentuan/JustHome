@@ -82,9 +82,7 @@ class PickProjectCategoryDetailViewModel: ObservableObject {
         }catch {
             self.generalError = error
         }
-    }
-    //TODO: lấy projectCategoryDetailId xong api get openforsale theo projectCategoryDetailID để sort coi cái nao đang mở bán
-    
+    }    
     func loadData(projectID: String){
         Task(priority: .medium) {
             try await loadProjectCategoryDetail(projectID: projectID)

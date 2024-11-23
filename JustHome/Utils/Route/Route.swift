@@ -17,12 +17,27 @@ enum Route {
     case bookings(bookingID: String)
     // route to real time
     case realTime(projectCategoryDetailID: String)
+    //route contract
+    case contract(contractID: String)
+    //route procedure
+    case procedure
+    //route for contract payment detail upload
+    case contractPaymentDetailUpload(contractPaymentDetail: ContractPaymentDetail)
 }
 
 extension Route {
-    //TODO: write buildDeepLink func for sharing an item of project
-    static func buildDeepLink(){
-        
+    static func buildDeepLink(from route: Route) -> URL? {
+        switch route {
+        case .projects(let project):
+            let queryProjectId = project.projectID
+            var url = URL(string: "justhome://project")!
+            let queryItems = [URLQueryItem(name: "projectID", value: queryProjectId)]
+            url.append(queryItems: queryItems)
+            return url
+        default:
+            break
+        }
+    return nil
     }
 }
 
@@ -39,6 +54,12 @@ extension Route: Hashable {
         case (.bookings(let lhsItem), .bookings(let rhsItem)):
             return lhsItem == rhsItem
         case (.realTime(let lhsItem), .realTime(let rhsItem)):
+            return lhsItem == rhsItem
+        case (.contract(let lhsItem), .contract(let rhsItem)):
+            return lhsItem == rhsItem
+        case (.procedure, .procedure):
+            return true
+        case (.contractPaymentDetailUpload(let lhsItem), .contractPaymentDetailUpload(let rhsItem)):
             return lhsItem == rhsItem
         default:
             return false
@@ -60,6 +81,14 @@ extension Route: View {
         case .realTime(let projectCategoryDetailID):
             RealTimeView(categoryDetailID: projectCategoryDetailID)
                 .toolbar(.hidden, for: .tabBar)
+        case .contract(let contractID):
+            ContractDetailView(contractID: contractID)
+        case .procedure:
+            ProcedureView()
+                .toolbar(.hidden, for: .tabBar)
+        case .contractPaymentDetailUpload(let contractPaymentDetail):
+            ContractPaymentDetailUploadView(contractPaymentDetail: contractPaymentDetail)
         }
+        
     }
 }

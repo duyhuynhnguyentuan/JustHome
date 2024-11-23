@@ -21,7 +21,9 @@ class ProjectDetailViewModel: ObservableObject {
         loadData(projectID: projectID)
     }
     var hasOpenForSale: Bool {
-        projectCategoryDetail.contains { $0.openForSale }
+        projectCategoryDetail.contains {
+            $0.openForSale == "Giữ chỗ" || $0.openForSale == "Mua trực tiếp"
+        }
     }
     @MainActor
     func loadProjectCategoryDetail(projectID: String) async throws{

@@ -28,6 +28,10 @@ import Foundation
     case emails
     /// endpoints for properties
     case propertys
+    ///endpoints contract
+    case contracts
+    ///endpoint contractPaymentDetail
+    case contractPaymentDetails
     /// Computed property to handle custom raw values for endpoints
     var rawValue: String {
         switch self {
@@ -35,6 +39,8 @@ import Foundation
             return "project-category-details"
         case .openForSales:
             return "open-for-sales"
+        case .contractPaymentDetails:
+            return "contract-payment-details"
         default:
             return String(describing: self)
         }

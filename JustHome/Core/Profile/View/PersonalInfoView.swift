@@ -47,22 +47,22 @@ struct PersonalInfoView: View {
         VStack{
             List{
                 LabeledContent{
-                    Text((viewModel.customer?.identityCardNumber)!)
+                    Text((viewModel.customer?.identityCardNumber ?? ""))
                 }label: {
                     Text("Số căn cước:")
                 }
                 LabeledContent{
-                    Text((viewModel.customer?.dateOfExpiry)!)
+                    Text((viewModel.customer?.dateOfExpiry ?? ""))
                 }label: {
                     Text("Ngày hết hạn:")
                 }
                 LabeledContent{
-                    Text((viewModel.customer?.placeOfResidence)!)
+                    Text((viewModel.customer?.placeOfResidence ?? ""))
                 }label: {
                     Text("Nơi thường chú:")
                 }
                 LabeledContent{
-                    Text((viewModel.customer?.placeofOrigin)!)
+                    Text((viewModel.customer?.placeofOrigin ?? ""))
                 }label: {
                     Text("Quê quán:")
                 }
@@ -72,7 +72,7 @@ struct PersonalInfoView: View {
                     Text("Số tài khoản")
                 }
                 LabeledContent{
-                    Text((viewModel.customer?.taxcode)!)
+                    Text((viewModel.customer?.taxcode ?? ""))
                 }label: {
                     Text("Mã số thuế")
                 }
@@ -91,7 +91,6 @@ struct PersonalInfoView: View {
                    )
            )
            .padding(.horizontal, 5)
-           //TODO: Adding props here
            .frame(maxWidth: .infinity)
     }
 }

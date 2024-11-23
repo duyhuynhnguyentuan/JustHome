@@ -79,7 +79,7 @@ class FeedViewModel: ObservableObject {
             isSearching = false
             switch error {
             case .errorResponse(let response):
-                if response.message == "Project not found." {
+                if response.message == "Dự án không tồn tại." {
                     noResult = true
                 }
             default:
@@ -108,7 +108,7 @@ class FeedViewModel: ObservableObject {
         } catch let error as NetworkError {
             switch error {
             case .errorResponse(let response):
-                if response.message == "Project not found." {
+                if response.message == "Dự án không tồn tại." {
                     hasReachedEnd = true
                     page -= 1
                 }

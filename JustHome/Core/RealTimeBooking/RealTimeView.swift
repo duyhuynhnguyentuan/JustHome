@@ -11,6 +11,7 @@ struct RealTimeView: View {
     @State private var selectedZoneName: String = ""
     @State private var selectedBlockName: String = ""
     @State private var selectedNumFloor: Int? = nil
+    @State private var confirmationDialogIsPresented: Bool = false
     @Environment(\.dismiss) private var dismiss
     let categoryDetailID: String
     let columns = [
@@ -26,15 +27,26 @@ struct RealTimeView: View {
     var body: some View {
         ScrollView(.vertical) {
             VStack {
-                //TODO: Check nếu ng dùng chưa tới lựt
                 Text(viewmodel.properties.first?.projectName ?? "N/A")
                     .font(.headline)
                 
                 VStack(alignment: .leading, spacing: 5) {
                     Text("Trạng thái")
                     StatusFilter()
+                    //disabled selecting propterty if not current user selected
+                    if(!viewmodel.isCurrentUserDeposited){
+                        Text("Chưa tới lượt chọn")
+                            .font(.subheadline.bold())
+                            .foregroundStyle(.yellow)
+                    }else{
+                        Text("Đã tới lượt chọn của bạn")
+                            .font(.subheadline.bold())
+                            .foregroundStyle(.green)
+
+                    }
                     PropertyList()
                         .padding(.top)
+                        .disabled(!viewmodel.isCurrentUserDeposited)
                 }
                 .frame(maxWidth: .infinity, alignment: .leading) // Adjust frame to align text to leading
                 Spacer()
@@ -42,18 +54,18 @@ struct RealTimeView: View {
                     .font(.subheadline.bold())
                     .foregroundStyle(.red)
                 Button{
-                    Task{
-                        //TODO: add confirmation diaglog here insteal
-                       let response =  try await viewmodel.selectProperty(by: viewmodel.selectedProperty?.propertyID ?? "N/A")
-                        if response?.message != nil {
-                            dismiss()
-                        }
-                    }
+                    confirmationDialogIsPresented.toggle()
                 }label: {
                     if let property = viewmodel.selectedProperty {
-                        Text("Hoàn tất".uppercased())
-                            .font(.title2.bold())
-                            .modifier(JHButtonModifier())
+                        if viewmodel.loadingState == .loading {
+                            Text("Loading...".uppercased())
+                                .font(.title2.bold())
+                                .modifier(JHButtonModifier(backgroundColor: .red))
+                        } else {
+                            Text("Hoàn tất".uppercased())
+                                .font(.title2.bold())
+                                .modifier(JHButtonModifier())
+                        }
                     }else{
                         Text("Bạn chưa chọn cái nào".uppercased())
                             .font(.title2.bold())
@@ -61,6 +73,16 @@ struct RealTimeView: View {
                     }
                 }
                 .disabled(viewmodel.selectedProperty == nil)
+                .confirmationDialog("Bạn có chắc chắn chọn: \(viewmodel.selectedProperty?.propertyCode ?? "N/A")", isPresented: $confirmationDialogIsPresented, titleVisibility: .visible){
+                    Button("Có", role: .destructive){
+                        Task{
+                           let response =  try await viewmodel.selectProperty(by: viewmodel.selectedProperty?.propertyID ?? "N/A")
+                            if response?.message != nil {
+                                dismiss()
+                            }
+                        }
+                    }
+                }
                 
             }
             .sheet(isPresented: $isPresentedSheet){
@@ -72,6 +94,35 @@ struct RealTimeView: View {
             }
             .padding(.horizontal)
             .frame(maxWidth: .infinity) // Fill the width of the screen
+        }
+        .alert(item: $viewmodel.error) { error in
+            // Handle alert cases
+            switch error {
+            case .badRequest:
+                return Alert(
+                    title: Text("Bad Request"),
+                    message: Text("Unable to perform the request."),
+                    dismissButton: .default(Text("OK"))
+                )
+            case .decodingError(let decodingError):
+                return Alert(
+                    title: Text("Decoding Error"),
+                    message: Text(decodingError.localizedDescription),
+                    dismissButton: .default(Text("OK"))
+                )
+            case .invalidResponse:
+                return Alert(
+                    title: Text("Invalid Response"),
+                    message: Text("The server response was invalid."),
+                    dismissButton: .default(Text("OK"))
+                )
+            case .errorResponse(let errorResponse):
+                return Alert(
+                    title: Text("Lỗi"),
+                    message: Text(errorResponse.message ?? "An unknown error occurred."),
+                    dismissButton: .default(Text("OK"))
+                )
+            }
         }
         .onDisappear {
                 viewmodel.disconnect()
@@ -127,8 +178,8 @@ struct RealTimeView: View {
                             withAnimation {
                                 viewmodel.selectedProperty = property
                             }
-                            //TODO: dismiss if property. status = Giu cho
                         }
+                        .disabled(property.status == "Giữ chỗ")
                 }
             }
         }
@@ -239,7 +290,7 @@ struct RealTimeView: View {
             .navigationTitle("Bộ lọc")
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("Apply") {
+                    Button("Áp dụng") {
                         // Close the sheet
                         isPresentedSheet = false
                     }
