@@ -77,7 +77,7 @@ struct StepFiveView: View {
                         uploadMessage = "Vui lòng chọn ảnh trước khi tải lên."
                     }
                 } label: {
-                    Text("TÔI ĐÃ THANH TOÁN")
+                    Text("Tôi đã thanh toán")
                         .font(.title)
                         .fontWeight(.black)
                         .modifier(JHButtonModifier())
@@ -179,9 +179,9 @@ struct StepFiveView: View {
                    let message = jsonResponse["message"] as? String {
                     alertMessage = message
                     print("Parsed Server Message: \(message)")
-
-                    if message == "Thanh toán tiến độ lần 1 Hợp đồng mua bán thành công." {
+                    if !message.isEmpty {
                         routerManager.push(to: .procedure)
+                        routerManager.reset()
                         return
                     }
                 } else {

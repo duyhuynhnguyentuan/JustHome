@@ -58,7 +58,7 @@ struct ContractProgressView: View {
         case .daxacnhanhopdongmuaban:
             return [completed, completed, completed, completed, completed, completed, completed, pending]
         case .dabangiaoquyensohuudat:
-            return [completed, completed, completed, completed, completed, completed, completed, pending]
+            return [completed, completed, completed, completed, completed, completed, completed, completed]
         default:
             return [completed, completed, completed, completed, completed, completed, completed, completed]
         }

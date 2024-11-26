@@ -32,9 +32,17 @@ import Foundation
     case contracts
     ///endpoint contractPaymentDetail
     case contractPaymentDetails
+    /// endpoint noti
+    case notifications
+    /// endpoint sale policy
+    case salePolicies
+    /// endpoint for PanoramaImage
+    case PanoramaImage
     /// Computed property to handle custom raw values for endpoints
     var rawValue: String {
         switch self {
+        case .salePolicies:
+            return "sales-policys"
         case .projectCategoryDetails:
             return "project-category-details"
         case .openForSales:

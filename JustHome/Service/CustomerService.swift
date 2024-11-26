@@ -6,8 +6,7 @@
 //
 
 import Foundation
-
-
+//fullName, dateOfBirth, phoneNumer, nationality, address
 struct loadCustomerByIDResponse: Codable {
     var customerID: String
     var fullName: String

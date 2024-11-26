@@ -12,11 +12,11 @@ struct ProfileView: View {
     @Environment(\.colorScheme) var colorScheme
     @State private var confirmationShow = false
     let authService: AuthService
-
+    @StateObject var viewModel: ProfileViewModel
     init(authService: AuthService){
         self.authService = authService
+        _viewModel = StateObject(wrappedValue: ProfileViewModel(customerService: CustomerService(httpClient: HTTPClient())))
     }
-
     var body: some View {
         NavigationStack {
             ZStack {
@@ -25,10 +25,15 @@ struct ProfileView: View {
                     .ignoresSafeArea()
                     .blur(radius: 1)
                     .opacity(0.3)
-
+                switch viewModel.loadingState {
+                case .idle:
+                    EmptyView()
+                case .loading:
+                    ProgressView()
+                case .finished:
                 // Content on top of the gradient
                 VStack {
-                    Text(Customer.sample.fullName.initialsFromFirstTwoWords())
+                    Text(viewModel.customer?.fullName.initialsFromFirstTwoWords() ?? "N/A")
                         .font(.system(size: 35, weight: .bold))
                         .foregroundStyle(.white)
                         .background {
@@ -41,18 +46,18 @@ struct ProfileView: View {
                         }
                         .padding(.bottom, props.isIpad ? props.size.width / 12 : props.size.width / 7)
                         .padding(.top, props.isIpad ? props.size.width / 12 : props.size.width / 7)
-
-                    Text(Customer.sample.fullName)
+                    
+                    Text(viewModel.customer?.fullName ?? "N/A")
                         .font(.title2)
                         .bold()
                         .padding(.horizontal)
                         .foregroundStyle(colorScheme == .dark ? .lightGreen : .white)
-
-                    Label(Customer.sample.email, systemImage: "envelope")
+                    
+                    Label(viewModel.customer?.email ?? "N/A", systemImage: "envelope")
                         .imageScale(.small)
                         .padding(.all, 10)
                         .background(Color(.lightGreen).opacity(0.75), in: Capsule())
-
+                    
                     // MARK: - Middle part
                     List {
                         // General
@@ -62,11 +67,19 @@ struct ProfileView: View {
                             }label: {
                                 Text("Sửa thông tin căn cước và thông tin ngân hàng")
                             }
-                            Text("Thông tin cá nhân")
+                            //add EditProfile here
+                            NavigationLink {
+                                if viewModel.customer != nil {
+                                    LoadProfileView(customer: viewModel.customer!) // Make sure it's unwrapped or use optional binding
+                                }
+                            } label: {
+                                Text("Thông tin cá nhân")
+                            }
+
                         } header: {
                             Label("General", systemImage: "person.fill")
                         }
-
+                        
                         // Privacy and safety
                         Section {
                             NavigationLink{
@@ -92,15 +105,15 @@ struct ProfileView: View {
                                 confirmationShow.toggle()
                             }
                             .foregroundStyle(.red)
-                                .confirmationDialog("Chắc chắn đăng xuất",
-                                                    isPresented: $confirmationShow,
-                                                    titleVisibility: .visible) {
-                                    Button("Yes", role: .destructive){
-                                        withAnimation {
-                                            authService.logout()
-                                        }
+                            .confirmationDialog("Chắc chắn đăng xuất",
+                                                isPresented: $confirmationShow,
+                                                titleVisibility: .visible) {
+                                Button("Yes", role: .destructive){
+                                    withAnimation {
+                                        authService.logout()
                                     }
                                 }
+                            }
                         } header: {
                             Label("Danger Zone", systemImage: "exclamationmark.octagon.fill")
                                 .foregroundStyle(.red)
@@ -110,6 +123,10 @@ struct ProfileView: View {
                     .scrollContentBackground(.hidden)
                 }
                 .frame(maxWidth: .infinity)
+            }
+            }
+            .onAppear{
+                viewModel.loadData()
             }
         }
     }

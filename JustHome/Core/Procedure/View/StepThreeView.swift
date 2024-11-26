@@ -81,11 +81,12 @@ struct StepThreeView: View {
                         )
                 )
                 .padding(.horizontal)
+                .padding(.bottom)
                 //Button
                 Button {
                     stepThreeConfirmationDialogIsPresented.toggle()
                 } label: {
-                    Text("XÁC NHẬN THÔNG TIN")
+                    Text("Xác nhận thông tin")
                         .font(.headline)
                         .fontDesign(.rounded)
                         .modifier(JHButtonModifier())
@@ -117,6 +118,7 @@ struct StepThreeView: View {
             .alert(alertMessage, isPresented: $showAlert) {
                 Button("OK") {
                     routerManager.push(to: .procedure)
+                    routerManager.reset()
                 }
             }
          }

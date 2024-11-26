@@ -13,6 +13,7 @@
 		0071B72D2CD52AA400FEB497 /* StripePaymentSheet in Frameworks */ = {isa = PBXBuildFile; productRef = 0071B72C2CD52AA400FEB497 /* StripePaymentSheet */; };
 		0071B7382CD54A3F00FEB497 /* SceneKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0071B7322CD545E400FEB497 /* SceneKit.framework */; };
 		00879CF52CEF59C100120423 /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = 00879CF42CEF59C100120423 /* Alamofire */; };
+		00879D302CF37C7D00120423 /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = 00879D2F2CF37C7D00120423 /* Kingfisher */; };
 		0097F6E22CB2E91D00F60068 /* Lottie in Frameworks */ = {isa = PBXBuildFile; productRef = 0097F6E12CB2E91D00F60068 /* Lottie */; };
 		00B8538F2CCCBD9100B4CB33 /* FirebaseMessaging in Frameworks */ = {isa = PBXBuildFile; productRef = 00B8538E2CCCBD9100B4CB33 /* FirebaseMessaging */; };
 		00CCF1362CD553060088DA56 /* SwiftUIPanoramaViewer in Frameworks */ = {isa = PBXBuildFile; productRef = 00CCF1352CD553060088DA56 /* SwiftUIPanoramaViewer */; };
@@ -89,6 +90,7 @@
 				00879CF52CEF59C100120423 /* Alamofire in Frameworks */,
 				00244E602CDB52B20063EAF0 /* SignalRClient in Frameworks */,
 				0097F6E22CB2E91D00F60068 /* Lottie in Frameworks */,
+				00879D302CF37C7D00120423 /* Kingfisher in Frameworks */,
 				0071B72B2CD52AA400FEB497 /* Stripe in Frameworks */,
 				00CCF1362CD553060088DA56 /* SwiftUIPanoramaViewer in Frameworks */,
 			);
@@ -170,6 +172,7 @@
 				00244E5F2CDB52B20063EAF0 /* SignalRClient */,
 				00353FBA2CEC920000773D3B /* StepperView */,
 				00879CF42CEF59C100120423 /* Alamofire */,
+				00879D2F2CF37C7D00120423 /* Kingfisher */,
 			);
 			productName = JustHome;
 			productReference = 0097F6722CAD511200F60068 /* JustHome.app */;
@@ -261,6 +264,7 @@
 				00244E5E2CDB52B20063EAF0 /* XCRemoteSwiftPackageReference "SignalR-Client-Swift" */,
 				00353FB92CEC920000773D3B /* XCRemoteSwiftPackageReference "StepperView" */,
 				00879CF32CEF59C100120423 /* XCRemoteSwiftPackageReference "Alamofire" */,
+				00879D2E2CF37C7D00120423 /* XCRemoteSwiftPackageReference "Kingfisher" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 0097F6732CAD511200F60068 /* Products */;
@@ -671,6 +675,14 @@
 				minimumVersion = 5.10.1;
 			};
 		};
+		00879D2E2CF37C7D00120423 /* XCRemoteSwiftPackageReference "Kingfisher" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/onevcat/Kingfisher";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 8.1.1;
+			};
+		};
 		0097F6E02CB2E91D00F60068 /* XCRemoteSwiftPackageReference "lottie-ios" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/airbnb/lottie-ios.git";
@@ -722,6 +734,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 00879CF32CEF59C100120423 /* XCRemoteSwiftPackageReference "Alamofire" */;
 			productName = Alamofire;
+		};
+		00879D2F2CF37C7D00120423 /* Kingfisher */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 00879D2E2CF37C7D00120423 /* XCRemoteSwiftPackageReference "Kingfisher" */;
+			productName = Kingfisher;
 		};
 		0097F6E12CB2E91D00F60068 /* Lottie */ = {
 			isa = XCSwiftPackageProductDependency;

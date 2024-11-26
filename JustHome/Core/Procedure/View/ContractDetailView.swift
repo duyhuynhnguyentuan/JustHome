@@ -51,7 +51,9 @@ struct ContractDetailView: View {
                                 Image(systemName: "checkmark.shield.fill")
                                     .foregroundStyle(.primaryGreen)
                                 Text("Chúc mừng bạn đã thành công sở hữu đất!")
+                                    .font(.title3)
                                     .bold()
+                                    .padding(.top)
                                 ContractPaymentDetailView(contractID: contractID)
                             }
                         case .dahuy:
@@ -68,6 +70,7 @@ struct ContractDetailView: View {
                                 Image(systemName: "checkmark.shield.fill")
                                     .foregroundStyle(.primaryGreen)
                                 Text("Chúc mừng bạn đã chuyển nhượng thành công!")
+                                    .font(.title3)
                                     .bold()
                             }
                         case .choxacnhanTTCNTTDC:

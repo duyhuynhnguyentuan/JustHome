@@ -297,9 +297,14 @@ struct RealTimeView: View {
                 }
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Cancel") {
-                        isPresentedSheet = false
+                        // Reset all filters to their default state
+                        viewmodel.selectedZoneName = ""
+                        viewmodel.selectedBlockName = ""
+                        viewmodel.selectedNumFloor = nil
+                        isPresentedSheet = false // Close the sheet
                     }
                 }
+
             }
         }
     }

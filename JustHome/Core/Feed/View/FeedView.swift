@@ -3,8 +3,9 @@ import SwiftUI
 struct FeedView: View {
     @StateObject private var feedViewModel: FeedViewModel
     @EnvironmentObject private var routerManager : NavigationRouter
+    @StateObject private var dataController = DataController()
     init(projectsService: ProjectsService) {
-        _feedViewModel = StateObject(wrappedValue: FeedViewModel(projectsService: projectsService))
+        _feedViewModel = StateObject(wrappedValue: FeedViewModel(projectsService: projectsService, dataController: DataController()))
     }
 
     var body: some View {
@@ -49,17 +50,20 @@ struct FeedView: View {
                                 }
                                 .swipeActions(edge: .trailing, allowsFullSwipe: true) {
                                     Button{
+                                        feedViewModel.likeProject(project: project)
                                         print("liked: \(project.projectName)")
+                                        
                                     }label: {
                                         Label("Like", systemImage: "heart")
                                     }.tint(.pink)
                                 }
                                 .swipeActions(edge: .leading, allowsFullSwipe: true) {
-                                    Button{
-                                        print("shared: \(project.projectName)")
-                                    }label: {
-                                        Label("Share", systemImage: "square.and.arrow.up")
-                                    }.tint(.primaryGreen)
+                                    if let link = Route.buildDeepLink(from: .projects(project: project)){
+                                        ShareLink(item: link) {
+                                            Image(systemName: "square.and.arrow.up")
+                                                .foregroundStyle(.tertiaryGreen)
+                                        }
+                                    }
                                 }
                                 
                             }
@@ -109,8 +113,8 @@ struct FeedView: View {
                         .navigationSplitViewStyle(.balanced)
                         .toolbar {
                             ToolbarItemGroup(placement: .topBarTrailing) {
-                                Button{
-                                    
+                                NavigationLink {
+                                    LikedProjectsView()
                                 } label: {
                                     Image(systemName: "heart")
                                         .tint(Color.red)

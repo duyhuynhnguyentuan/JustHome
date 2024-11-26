@@ -99,7 +99,7 @@ struct ContractPaymentDetailUploadView: View {
                         uploadMessage = "Vui lòng chọn ảnh trước khi tải lên."
                     }
                 } label: {
-                    Text("TÔI ĐÃ THANH TOÁN")
+                    Text("Tôi đã thanh toán")
                         .font(.title)
                         .fontWeight(.black)
                         .modifier(JHButtonModifier())
@@ -202,8 +202,9 @@ struct ContractPaymentDetailUploadView: View {
                     alertMessage = message
                     print("Parsed Server Message: \(message)")
 
-                    if message == "Customer tải lên Ủy nhiệm chi thành công." {
+                    if !message.isEmpty {
                         routerManager.push(to: .procedure)
+                        routerManager.reset()
                         return
                     }
                 } else {

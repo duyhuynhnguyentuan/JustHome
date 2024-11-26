@@ -6,7 +6,6 @@
 //
 
 import Foundation
-
 struct ProjectResponse: Decodable, Encodable{
     let totalPages: Int
     let currentPage: Int

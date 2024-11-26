@@ -98,14 +98,14 @@ struct PickProjectCategoryDetail: View {
                                 .padding()
                                 .modifier(viewModel.selectedCategoryDetail != nil ? JHButtonModifier() : JHButtonModifier(backgroundColor: .gray))
                         } else {
-                            Text("Đi đến đặt cọc")
+                            Text(viewModel.selectedCategoryDetail?.openForSale == "Mua trực tiếp" ? "Vào chọn căn ngay" : "Đi đến đặt cọc")
                                 .bold()
                                 .padding()
                                 .modifier(viewModel.selectedCategoryDetail != nil ? JHButtonModifier() : JHButtonModifier(backgroundColor: .gray))
                         }
                     }
                     .disabled( viewModel.selectedCategoryDetail == nil)
-                    .confirmationDialog("Bạn có chắc chắn muốn đặt cọc", isPresented: $confirmationDialogIsPresented, titleVisibility: .visible){
+                    .confirmationDialog("Bạn đã chắc chắn?", isPresented: $confirmationDialogIsPresented, titleVisibility: .visible){
                         Button("Có", role: .destructive){
                             Task{
                                 //                                let response = try await viewModel.createBooking(propertyCategoryID: viewModel.selectedCategoryDetail!.propertyCategoryID, projectID: projectID, customerID: viewModel.customerID)

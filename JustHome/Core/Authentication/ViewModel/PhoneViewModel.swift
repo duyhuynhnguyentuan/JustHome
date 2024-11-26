@@ -12,8 +12,6 @@ class PhoneViewModel: ObservableObject {
       let referenceDate = Date(timeIntervalSinceNow:(1 * 5.0))
       @Published var verificationCode = ""
       @Published var verificationID = ""
-//      @Published var phoneNumber = ""
-//      @Published var countryCodeNumber = "+84"
       @Published var email = ""
       @Published var code = ""
       @Published var timerExpired = false

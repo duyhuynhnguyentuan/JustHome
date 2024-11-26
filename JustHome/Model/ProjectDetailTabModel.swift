@@ -14,8 +14,8 @@ struct ProjectDetailTabModel: Identifiable {
     enum Tab: String, CaseIterable {
         case general = "Tổng quan"
         case policy = "Chính sách"
-        case location = "Vị trí"
+        case location = "360 Tour"
         case utilities = "Tiện ích"
-        case related = "Liên quan"
+        case related = "Các loại hình "
     }
 }

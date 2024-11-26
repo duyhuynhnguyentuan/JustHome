@@ -145,9 +145,22 @@ struct BookingDetailView: View {
                                 }
                             case .dacheckin:
                                 if let checkinDateString = viewModel.openForSaleDetail?.checkinDate,
-                                   let checkinDate = DateFormatter.yyyyMMddHHmmss.date(from: checkinDateString) {
+                                   let checkinDate = DateFormatter.yyyyMMddHHmmss.date(from: checkinDateString),
+                                   let endDateString = viewModel.openForSaleDetail?.endDate,
+                                   let endDate = DateFormatter.yyyyMMddHHmmss.date(from: endDateString) {
+
                                     VStack {
                                         if Date() < Calendar.current.date(byAdding: .day, value: 1, to: checkinDate)! {
+                                            // Allow "Vào chọn căn ngay" if it's before checkinDate + 1 day
+                                            Button {
+                                                routerManager.push(to: .realTime(projectCategoryDetailID: viewModel.booking!.projectCategoryDetailID))
+                                            } label: {
+                                                Text("Vào chọn căn ngay")
+                                                    .bold()
+                                                    .modifier(JHButtonModifier())
+                                            }
+                                        } else if Date() > Calendar.current.date(byAdding: .day, value: 1, to: checkinDate)! && Date() < endDate {
+                                            // Allow "Vào chọn căn ngay" if it's after checkinDate + 1 day but before endDate
                                             Button {
                                                 routerManager.push(to: .realTime(projectCategoryDetailID: viewModel.booking!.projectCategoryDetailID))
                                             } label: {
@@ -156,6 +169,7 @@ struct BookingDetailView: View {
                                                     .modifier(JHButtonModifier())
                                             }
                                         } else {
+                                            // Show disabled button if current date is after endDate
                                             Button("Đã quá thời gian checkin") {}
                                                 .padding()
                                                 .background(Color.red)
@@ -164,16 +178,18 @@ struct BookingDetailView: View {
                                         }
                                     }
                                 } else {
-                                    Text("Ngày checkin không hợp lệ.")
+                                    // Handle invalid date scenarios
+                                    Text("Ngày checkin hoặc ngày kết thúc không hợp lệ.")
                                         .foregroundColor(.red)
                                 }
+
                             case .dachonsanpham, .dakythoathuandatcoc:
                                 Button {
                                 } label: {
                                     Label("Vui lòng vào trang hợp đồng để xem thông tin", systemImage: "info.circle")
                                 }
                                 .padding()
-                                .background(Color.red)
+                                .background(Color.yellow)
                                 .foregroundColor(.white)
                                 .cornerRadius(8)
                             case .dahuy:

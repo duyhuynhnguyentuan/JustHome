@@ -18,6 +18,12 @@ struct TransferContractView: View {
         _viewModel = StateObject(wrappedValue: TransferContractViewModel(contractId: contractID, contractService: ContractsService(httpClient: HTTPClient())))
     }
     var body: some View {
+        switch viewModel.loadingState {
+        case .idle:
+            EmptyView()
+        case .loading:
+            ProgressView()
+        case .finished:
         VStack{
             Text("Để thực hiện giao dịch chuyển nhượng thỏa thuận đặt cọc, quý khách vui lòng điền các thông tin theo nội dung dưới đây")
                 .font(.caption)
@@ -29,38 +35,45 @@ struct TransferContractView: View {
                 .foregroundStyle(.secondaryGreen)
                 .padding(.bottom)
             //Customer detail cell
-            VStack{
-                HStack{
-                    VStack(alignment: .leading){
-                        if let selectedTransferee = viewModel.selectedTransferee {
-                            Text("Đã chọn:")
-                                .font(.caption)
-                                .foregroundStyle(.green)
-                            Text(selectedTransferee.fullName)
-                                .font(.title3.bold())
-                            Text("Số CCCD: \(selectedTransferee.identityCardNumber ?? "N/A")")
-                                .font(.headline)
-                            Text("Ngày sinh: \(selectedTransferee.dateOfBirth)")
-                                .font(.callout)
-                            Text("Số điện thoại: \(selectedTransferee.phoneNumber) ")
-                                .font(.callout)
-                            Text("Email: \(selectedTransferee.email) ")
-                                .font(.callout)
-                        }else{
-                            Text("Chưa chọn bên chuyển nhượng")
-                                .font(.title3.bold())
-                                .foregroundStyle(.yellow)
+            if viewModel.loadingState == .loading {
+                ProgressView()
+            }else {
+                VStack{
+                    HStack{
+                        VStack(alignment: .leading){
+                            if let selectedTransferee = viewModel.selectedTransferee {
+                                Text("Đã chọn:")
+                                    .font(.caption)
+                                    .foregroundStyle(.green)
+                                Text(selectedTransferee.fullName)
+                                    .font(.title3.bold())
+                                Text("Số CCCD: \(selectedTransferee.identityCardNumber ?? "N/A")")
+                                    .font(.headline)
+                                Text("Ngày sinh: \(selectedTransferee.dateOfBirth)")
+                                    .font(.callout)
+                                Text("Số điện thoại: \(selectedTransferee.phoneNumber) ")
+                                    .font(.callout)
+                                Text("Email: \(selectedTransferee.email) ")
+                                    .font(.callout)
+                            }else{
+                                Text("Chưa chọn bên chuyển nhượng")
+                                    .font(.title3.bold())
+                                    .foregroundStyle(.yellow)
+                            }
                         }
+                        Spacer()
+                        Image(systemName: "chevron.right")
                     }
-                    Spacer()
-                    Image(systemName: "chevron.right")
                 }
+                .onTapGesture {
+                    isSheetPresented.toggle()
+                }
+                .padding()
+                .background(
+                    RoundedRectangle(cornerRadius: 12)
+                        .stroke(Color.primaryGreen, lineWidth: 3)
+                )
             }
-            .padding()
-            .background(
-                RoundedRectangle(cornerRadius: 12)
-                    .stroke(Color.primaryGreen, lineWidth: 3)
-            )
             //Confirm button
             Spacer()
             Button{
@@ -104,7 +117,7 @@ struct TransferContractView: View {
         .confirmationDialog("Bạn đã chắc chắn thông tin là chính xác?", isPresented: $showConfirmationDialog, titleVisibility: .visible) {
             Button("Có", role: .destructive) {
                 Task{
-                   let response = try await viewModel.checkCustomerTransferred(customerTransfereeId: viewModel.selectedTransferee!.customerID)
+                    let response = try await viewModel.checkCustomerTransferred(customerTransfereeId: viewModel.selectedTransferee!.customerID)
                     if(response.message != nil){
                         routerManager.push(to: .procedure)
                         routerManager.reset()
@@ -115,8 +128,9 @@ struct TransferContractView: View {
         }
         .padding(.horizontal)
         .sheet(isPresented: $isSheetPresented) {
-                  TransfereeSelectionView(viewModel: viewModel)
+            TransfereeSelectionView(viewModel: viewModel)
         }
+      }
     }
 }
 struct TransfereeSelectionView: View {
@@ -147,13 +161,18 @@ struct TransfereeSelectionView: View {
                             .font(.headline)
                         Text("Số CCCD: \(transferee.identityCardNumber ?? "")")
                             .font(.subheadline)
+                        if transferee == viewModel.selectedTransferee {
+                            Text("Đã chọn bên chuyển nhượng này ✅ ")
+                                .foregroundStyle(.green)
+                                .font(.callout.bold())
+                        }
                     }
                     .onTapGesture {
                         viewModel.selectedTransferee = transferee
                     }
                 }
             }
-            .navigationTitle("Chọn bên chuyển nhượng")
+            .navigationTitle("Bên chuyển nhượng")
             .navigationBarItems(trailing: Button("Đóng") {
                 viewModel.loadData()
             })

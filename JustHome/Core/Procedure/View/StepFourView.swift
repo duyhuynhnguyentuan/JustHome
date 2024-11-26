@@ -188,6 +188,7 @@ struct StepFourView: View {
         .alert(alertMessage, isPresented: $showAlert) {
             Button("OK") {
                 routerManager.push(to: .procedure)
+                routerManager.reset()
             }
         }
         .padding(.horizontal)

@@ -23,6 +23,8 @@ enum Route {
     case procedure
     //route for contract payment detail upload
     case contractPaymentDetailUpload(contractPaymentDetail: ContractPaymentDetail)
+    ///
+    case profile
 }
 
 extension Route {
@@ -61,6 +63,8 @@ extension Route: Hashable {
             return true
         case (.contractPaymentDetailUpload(let lhsItem), .contractPaymentDetailUpload(let rhsItem)):
             return lhsItem == rhsItem
+        case (.profile, .profile):
+            return true
         default:
             return false
         }
@@ -88,6 +92,8 @@ extension Route: View {
                 .toolbar(.hidden, for: .tabBar)
         case .contractPaymentDetailUpload(let contractPaymentDetail):
             ContractPaymentDetailUploadView(contractPaymentDetail: contractPaymentDetail)
+        case .profile:
+            ProfileView(authService: AuthService(keychainService: KeychainService.shared, httpClient: HTTPClient()))
         }
         
     }

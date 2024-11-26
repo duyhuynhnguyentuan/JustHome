@@ -29,7 +29,6 @@ struct PersonalInfoView: View {
             }
             NavigationLink{
                 IdentityCardTextRecognizing()
-                    .navigationBarBackButtonHidden()
             }label: {
                 Text("Thay đổi giấy tờ tùy thân")
                     .modifier(JHButtonModifier())

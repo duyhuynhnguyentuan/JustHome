@@ -8,12 +8,12 @@
 import SwiftUI
 import SceneKit
 import SwiftUIPanoramaViewer
+import Kingfisher
 
 struct ProjectDetailView: View {
     //360 tour
     @State var fullScreen360:Bool = false
     @State var rotationIndicator:Float = 0.0
-    @State var scene3D = SCNScene()
     //others
     @State private var isPresentedPickCategorySheet = false
     @StateObject private var viewModel: ProjectDetailViewModel
@@ -98,7 +98,7 @@ struct ProjectDetailView: View {
                                     .frame(width: props.size.width, height: props.size.height)
                                  
                             case .policy:
-                                Text("Chisnh sach")
+                                SalesPolicy()
                                     .frame(width: props.size.width, height:props.size.height)
                     
                             case .location:
@@ -106,10 +106,14 @@ struct ProjectDetailView: View {
                                     .frame(width: props.size.width, height:props.size.height)
                                
                             case .utilities:
-                                Text("\(project.convenience)")
+                                VStack{
+                                 Text("\(project.convenience)")
+                                        .padding(.horizontal)
+                                    Spacer()
+                                }
                                     .frame(width: props.size.width, height:props.size.height)
                             case .related:
-                                Text("may")
+                                OpeningPropertyName()
                                     .frame(width: props.size.width, height:props.size.height)
                             }
                      
@@ -162,6 +166,50 @@ struct ProjectDetailView: View {
             .fullScreenCover(isPresented: $viewModel.showImageViewer, content: {
                 ImageView(viewModel: viewModel, images: project.images)
             })
+    }
+    @ViewBuilder
+    func OpeningPropertyName() -> some View {
+        VStack(alignment: .leading) {
+            Text("Các loại hình đang và đã được mở bán:")
+                .font(.title2.bold())
+                .padding(.bottom)
+            ForEach(viewModel.listOfProejctCategoryDetailName, id: \.self) { name in
+                Text("☞\(name)")
+                    .font(.title3)
+                    .fontWeight(.light)
+                    .fontDesign(.monospaced)
+            }
+            Spacer()
+        }
+    }
+
+    @ViewBuilder
+    func SalesPolicy() -> some View {
+        VStack{
+            VStack(alignment: .leading){
+                Text("\(project.projectName) đang có chính sách bán hàng sau")
+                    .font(.callout)
+                    .italic()
+                Text("Tên chính sách: \(viewModel.salesPolicy.first?.salesPolicyType ?? "N/A")")
+                Text("Thời điểm áp dụng: \(viewModel.salesPolicy.first?.expressTime ?? "N/A")")
+                Text("Đối tượng áp dụng: \(viewModel.salesPolicy.first?.peopleApplied ?? "N/A")")
+                
+            }
+            .padding()
+            .background(
+                RoundedRectangle(cornerRadius: 8)
+                    .fill(.background)
+                    .shadow(
+                        color: Color.primaryGreen.opacity(0.7),
+                        radius: 8,
+                        x: 0,
+                        y: 0
+                    )
+            )
+            .padding(.horizontal, 5)
+            .frame(maxWidth: .infinity)
+            Spacer()
+        }
     }
     // Small info view of number of apartments
     @ViewBuilder
@@ -377,57 +425,132 @@ struct ProjectDetailView: View {
     }
     //MARK: 360 tour tab
     func VirtualTour() -> some View {
-        VStack {
-            ZStack(alignment: .top){
-                // Panorama viewer in the background
-                //TODO: khúc này thay hình
-                PanoramaViewer(image: SwiftUIPanoramaViewer.bindImage(
-                    .image360
-                )) { key in }
-                cameraMoved: { pitch, yaw, roll in
-                    rotationIndicator = yaw
-                }
-                
-                // Top overlay HStack
-                HStack {
-                    Text("Tổng quan: \(project.projectName)")
-                        .font(.footnote)
-                        .bold()
-                        .padding(.horizontal, 20)
-                        .padding(.vertical, 5)
-                        .background(Color.gray.mask(Capsule()))
+        ScrollView {
+            VStack(spacing: 20) {
+                if viewModel.panoramaImages.isEmpty {
+                    Text("No Panorama Images Available")
+                        .frame(maxWidth: .infinity, minHeight: 200)
+                        .background(Color.gray)
                         .foregroundColor(.white)
-                        .cornerRadius(5)
-                        .padding([.leading, .top], 10)
-                        .opacity(fullScreen360 ? 1 : 0 )// Positioned at the top
-                    Spacer()
-                    Image(systemName: "move.3d")
-                        .padding(.horizontal, 10)
-                        .padding(.vertical, 5)
+                        .cornerRadius(8)
+                } else {
+                    ForEach(viewModel.panoramaImages, id: \.self) { panoramaImage in
+                        VStack(alignment: .leading, spacing: 10) {
+                            Text("Tổng quan: \(panoramaImage.title)")
+                                .font(.footnote)
+                                .bold()
+                                .padding(.horizontal, 20)
+                                .padding(.vertical, 5)
+                                .background(Color.gray.mask(Capsule()))
+                                .foregroundColor(.white)
+                                .cornerRadius(5)
+
+                            AsyncImageView(urlString: panoramaImage.image)
+                                .frame(height: UIScreen.main.bounds.height / 3)
+                                .cornerRadius(10)
+                        }
+                        .padding(.horizontal)
+                    }
                 }
-                .padding(.top, fullScreen360 ? 50 : 10)
-                .frame(width: UIScreen.main.bounds.width)
-                
-                // Bottom overlay CompassView
-                VStack {
-                    Spacer()
-                    CompassView()
-                        .frame(width: 50, height: 50)
-                        .rotationEffect(Angle(degrees: Double(rotationIndicator)))
-                        .padding(.bottom, 20) // Positioned at the bottom
-                }
+                Spacer(minLength: 20)
             }
-            .frame(width: UIScreen.main.bounds.width, height: fullScreen360 ? UIScreen.main.bounds.height : UIScreen.main.bounds.height / 3)
-            
-            Spacer()
-        }
-        .onLongPressGesture {
-            fullScreen360.toggle()
+            .padding(.vertical)
         }
     }
+    struct FullScreen360View: View {
+        let image: UIImage
+
+        var body: some View {
+            ZStack {
+                Color.black.ignoresSafeArea()
+
+                PanoramaViewer(image: SwiftUIPanoramaViewer.bindImage(image)) { key in }
+                    cameraMoved: { pitch, yaw, roll in
+                        print("Camera moved: Pitch: \(pitch), Yaw: \(yaw), Roll: \(roll)")
+                    }
+                    .ignoresSafeArea()
+
+                Button(action: {
+                    UIApplication.shared.windows.first { $0.isKeyWindow }?.rootViewController?.dismiss(animated: true)
+                }) {
+                    Image(systemName: "xmark.circle.fill")
+                        .foregroundColor(.white)
+                        .font(.system(size: 30))
+                }
+                .position(x: 30, y: 50)
+            }
+        }
+    }
+
+    struct AsyncImageView: View {
+        let urlString: String
+        @State private var uiImage: UIImage? = nil
+        @State private var isFullScreenPresented: Bool = false // Track full-screen state
+        @State var rotationIndicator: Float = 0.0
+
+        var body: some View {
+            Group {
+                if let uiImage = uiImage {
+                    // 360 Cell with Full-Screen Support
+                    ZStack(alignment: .bottomLeading) {
+                        PanoramaViewer(image: SwiftUIPanoramaViewer.bindImage(uiImage)) { key in }
+                            cameraMoved: { pitch, yaw, roll in
+                                rotationIndicator = yaw
+                            }
+                            .gesture(
+                                LongPressGesture()
+                                    .onEnded { _ in
+                                        isFullScreenPresented = true
+                                    }
+                            ) // Long press to trigger full screen
+
+                        CompassView()
+                            .frame(width: 50, height: 50)
+                            .rotationEffect(Angle(degrees: Double(rotationIndicator)))
+                            .padding(.horizontal)
+                            .padding(.bottom, 20) // Positioned at the bottom
+                    }
+                    .fullScreenCover(isPresented: $isFullScreenPresented) {
+                        FullScreen360View(image: uiImage)
+                    }
+                } else {
+                    ProgressView()
+                        .onAppear {
+                            loadImage(from: urlString) { image in
+                                DispatchQueue.main.async {
+                                    self.uiImage = image
+                                }
+                            }
+                        }
+                }
+            }
+        }
+
+        func loadImage(from urlString: String, completion: @escaping (UIImage?) -> Void) {
+            guard let url = URL(string: urlString) else {
+                completion(nil) // Invalid URL
+                return
+            }
+
+            // Fetch image using Kingfisher
+            KingfisherManager.shared.retrieveImage(with: url) { result in
+                switch result {
+                case .success(let value):
+                    completion(value.image) // Return the loaded image
+                case .failure(let error):
+                    print("Error loading image: \(error)")
+                    completion(nil) // Return nil on failure
+                }
+            }
+        }
+    }
+
 
 }
 
 #Preview {
     ProjectDetailView(project: Project.sample2)
 }
+
+
+

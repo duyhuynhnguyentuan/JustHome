@@ -1,12 +1,14 @@
-        //
-        //  FeedViewModel.swift
-        //  JustHome
-        //
-        //  Created by Huynh Nguyen Tuan Duy on 11/10/24.
-        //
+//
+//  FeedViewModel.swift
+//  JustHome
+//
+//  Created by Huynh Nguyen Tuan Duy on 11/10/24.
+//
 
 import Foundation
 import Combine
+import CoreData
+import SwiftUI
 
 @MainActor
 class FeedViewModel: ObservableObject {
@@ -17,7 +19,9 @@ class FeedViewModel: ObservableObject {
     @Published var hasReachedEnd = false
     @Published var noResult: Bool = false
     @Published var isSearching: Bool = false  // Controls search loading overlay
-    
+//    @Environment(\.managedObjectContext) private var managedObjectContext
+//    @EnvironmentObject private var dataController: DataController
+    let dataController: DataController
     @Published var searchText = "" {
         didSet {
             searchTextSubject.send(searchText)
@@ -29,12 +33,69 @@ class FeedViewModel: ObservableObject {
     private var cancellables: Set<AnyCancellable> = []
     private let searchTextSubject = CurrentValueSubject<String, Never>("")
     
-    init(projectsService: ProjectsService) {
+    init(projectsService: ProjectsService, dataController: DataController) {
+        self.dataController = dataController
         self.projectsService = projectsService
         observeSearchTextChanges()
         loadData()
     }
+    // Function to save liked project
+    func likeProject(project: Project) {
+        // Check if the project is already liked
+        let fetchRequest: NSFetchRequest<LikedProject> = LikedProject.fetchRequest()
+        fetchRequest.predicate = NSPredicate(format: "projectID == %@", project.projectID)
 
+        do {
+            let likedProjects = try dataController.container.viewContext.fetch(fetchRequest)
+
+            if let existingLikedProject = likedProjects.first {
+                // If the project is already liked, unlike it by deleting it
+                dataController.container.viewContext.delete(existingLikedProject)
+                print("Project unliked: \(project.projectName)")
+            } else {
+                // If the project is not liked, add it as a liked project
+                let likedProject = LikedProject(context: dataController.container.viewContext)
+                likedProject.projectID = project.projectID
+                likedProject.projectName = project.projectName
+                likedProject.location = project.location
+                // Add other properties as necessary
+                print("Project liked: \(project.projectName)")
+            }
+            
+            // Save the context after liking or unliking the project
+            try dataController.container.viewContext.save()
+            
+        } catch {
+            print("Error saving liked project: \(error.localizedDescription)")
+        }
+    }
+
+
+        // Function to count liked projects
+//        func countLikedProjects() -> Int {
+//            let fetchRequest: NSFetchRequest<LikedProject> = LikedProject.fetchRequest()
+//            
+//            do {
+//                let count = try managedObjectContext.count(for: fetchRequest)
+//                return count
+//            } catch {
+//                print("Error counting liked projects: \(error.localizedDescription)")
+//                return 0
+//            }
+//        }
+
+        // Function to fetch liked projects
+        func fetchLikedProjects() -> [LikedProject] {
+            let fetchRequest: NSFetchRequest<LikedProject> = LikedProject.fetchRequest()
+            
+            do {
+                let likedProjects = try dataController.container.viewContext.fetch(fetchRequest)
+                return likedProjects
+            } catch {
+                print("Error fetching liked projects: \(error.localizedDescription)")
+                return []
+            }
+        }
     @MainActor
     func handleRefresh() {
         projects.removeAll()

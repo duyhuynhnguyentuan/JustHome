@@ -86,6 +86,7 @@ class ActivityViewModel: ObservableObject {
             switch result {
             case .success:
                 self!.loadingState = .finished
+               
                 // Use credentials as needed
             case .failure(let error):
                 print("Biometric authentication failed: \(error.localizedDescription)")
