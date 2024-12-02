@@ -74,6 +74,8 @@ extension Bookings {
             return .purple
         case "Đã hủy":
             return .red
+        case "Không chọn sản phẩm":
+            return .brown
         default:
             return .gray
         }

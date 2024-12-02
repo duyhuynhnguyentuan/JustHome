@@ -21,6 +21,11 @@ struct ProcedureViewRow: View {
                     .font(.caption.bold())
                     .foregroundStyle(.red)
                     .multilineTextAlignment(.leading)
+                Text("Ngày hết hạn: \(contract.expiredTime)")
+                    .italic()
+                    .font(.caption.bold())
+                    .foregroundStyle(.yellow)
+                    .multilineTextAlignment(.leading)
     
             }
             Spacer()

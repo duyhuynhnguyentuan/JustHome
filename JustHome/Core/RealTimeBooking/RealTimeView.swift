@@ -13,6 +13,7 @@ struct RealTimeView: View {
     @State private var selectedNumFloor: Int? = nil
     @State private var confirmationDialogIsPresented: Bool = false
     @Environment(\.dismiss) private var dismiss
+    @EnvironmentObject private var routerManager : NavigationRouter
     let categoryDetailID: String
     let columns = [
         GridItem(.flexible()),
@@ -23,26 +24,29 @@ struct RealTimeView: View {
         self.categoryDetailID = categoryDetailID
         _viewmodel = StateObject(wrappedValue: RealTimeViewModel(PropertyService: PropertyService(httpClient: HTTPClient()), categoryDetailID: categoryDetailID))
     }
+    //TODO: add countdown timer
     @State private var isPresentedSheet: Bool = false
     var body: some View {
         ScrollView(.vertical) {
             VStack {
                 Text(viewmodel.properties.first?.projectName ?? "N/A")
                     .font(.headline)
-                
+                //TODO: Show countdown timer red here
                 VStack(alignment: .leading, spacing: 5) {
                     Text("Trạng thái")
                     StatusFilter()
                     //disabled selecting propterty if not current user selected
-                    if(!viewmodel.isCurrentUserDeposited){
+                    if viewmodel.isCurrentUserDeposited {
+                        HStack {
+                            Text("Thời gian còn lại: \(viewmodel.timeRemaining / 60):\(String(format: "%02d", viewmodel.timeRemaining % 60))")
+                                .font(.title2.bold())
+                                .foregroundColor(.red)
+                            Spacer()
+                        }
+                    } else {
                         Text("Chưa tới lượt chọn")
-                            .font(.subheadline.bold())
+                            .font(.title2.bold())
                             .foregroundStyle(.yellow)
-                    }else{
-                        Text("Đã tới lượt chọn của bạn")
-                            .font(.subheadline.bold())
-                            .foregroundStyle(.green)
-
                     }
                     PropertyList()
                         .padding(.top)
@@ -83,7 +87,23 @@ struct RealTimeView: View {
                         }
                     }
                 }
-                
+                Divider()
+                Button{
+                    viewmodel.stopTimer()
+                    Task {
+                        viewmodel.stopTimer()
+                        Task {
+                            try await viewmodel.deleteBooking(bookingID: viewmodel.depositedBooking?.bookingID ?? "")
+                        }
+                        routerManager.push(to: .activity)
+                    }
+                }label: {
+                    Text("Tôi không muốn chọn nữa")
+                        .italic()
+                        .font(.headline)
+                        .foregroundStyle(.secondary)
+                        .underline()
+                }
             }
             .sheet(isPresented: $isPresentedSheet){
                 OptionSheet()
@@ -126,6 +146,12 @@ struct RealTimeView: View {
         }
         .onDisappear {
                 viewmodel.disconnect()
+            viewmodel.stopTimer()
+        }
+        .onChange(of: viewmodel.runningOutOfTime) { runningOutOfTime in
+            if runningOutOfTime {
+                routerManager.push(to: .activity)
+            }
         }
     }
     @ViewBuilder

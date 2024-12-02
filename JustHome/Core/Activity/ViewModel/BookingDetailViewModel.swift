@@ -14,6 +14,7 @@ enum BookingsStatus: String, CaseIterable {
     case dachonsanpham = "Đã chọn sản phẩm"
     case dakythoathuandatcoc = "Đã ký thỏa thuận đặt cọc"
     case dahuy = "Đã hủy"
+    case khongchonsanpham = "Không chọn sản phẩm"
 }
 class BookingDetailViewModel: ObservableObject {
     //declarations

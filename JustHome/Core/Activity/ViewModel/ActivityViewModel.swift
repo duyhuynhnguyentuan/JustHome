@@ -42,6 +42,7 @@ enum BookingsFilter: String, CaseIterable, Codable, Hashable, Identifiable {
     case dachonsanpham = "Đã chọn sản phẩm"
     case dakythoathuandatcoc = "Đã ký thỏa thuận đặt cọc"
     case dahuy = "Đã hủy"
+    case khongchonsanpham = "Không chọn sản phẩm"
 }
 class ActivityViewModel: ObservableObject {
     @Published var currentBookingsFilter: BookingsFilter = .all

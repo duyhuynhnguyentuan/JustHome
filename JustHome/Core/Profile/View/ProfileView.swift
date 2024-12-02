@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct ProfileView: View {
+    @EnvironmentObject private var routerManager : NavigationRouter
     @Environment(\.properties) var props
     @Environment(\.colorScheme) var colorScheme
     @State private var confirmationShow = false
@@ -111,6 +112,7 @@ struct ProfileView: View {
                                 Button("Yes", role: .destructive){
                                     withAnimation {
                                         authService.logout()
+                                        routerManager.reset()
                                     }
                                 }
                             }

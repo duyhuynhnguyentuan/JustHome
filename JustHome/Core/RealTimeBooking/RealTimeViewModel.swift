@@ -30,6 +30,10 @@ class RealTimeViewModel: ObservableObject {
     let propertyService: PropertyService
     let categoryDetailID: String
     let customerID: String
+    @Published var runningOutOfTime: Bool = false
+    @Published var timeRemaining: Int = 0
+      @Published var isTimerRunning: Bool = false
+      private var timer: Timer?
     @Published var selectedProperty: Property?
     @Published private(set) var properties = [Property]()
     @Published private(set) var depositedBooking: Bookings?
@@ -39,7 +43,7 @@ class RealTimeViewModel: ObservableObject {
     @Published var selectedBlockName: String = ""
     @Published var selectedNumFloor: Int? = nil
     @Published private(set) var loadingState: LoadingState = .idle
-
+    @EnvironmentObject private var routerManager : NavigationRouter
     private var hubConnection: HubConnection?
     var filteredProperties: [Property] {
         properties.filter { property in
@@ -56,6 +60,13 @@ class RealTimeViewModel: ObservableObject {
     var isCurrentUserDeposited: Bool {
         depositedBooking?.customerID == customerID
     }
+    func handleDepositedStatus() {
+        if isCurrentUserDeposited {
+            startTimer()
+        } else {
+            stopTimer()
+        }
+    }
     var propertyStatusCounts: [PropertyFilter: Int] {
         var counts = [PropertyFilter: Int]()
         
@@ -66,6 +77,29 @@ class RealTimeViewModel: ObservableObject {
         }
         
         return counts
+    }
+    func startTimer(for duration: Int = 120) {
+        timeRemaining = duration
+        isTimerRunning = true
+        
+        timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { [weak self] _ in
+            guard let self = self else { return }
+            if self.timeRemaining > 0 {
+                self.timeRemaining -= 1
+            } else {
+                self.stopTimer()
+                Task {
+                    try await self.deleteBooking(bookingID: self.depositedBooking?.bookingID ?? "")
+                }
+                runningOutOfTime = true
+            }
+        }
+    }
+    
+    func stopTimer() {
+        isTimerRunning = false
+        timer?.invalidate()
+        timer = nil
     }
     func setupSignalRConnection() {
         // Replace with your actual backend URL
@@ -109,12 +143,25 @@ class RealTimeViewModel: ObservableObject {
             print("Other error: \(error.localizedDescription)")
         }
     }
-
+    //its actually not choosing booking 
+    @MainActor
+    func deleteBooking(bookingID: String) async throws{
+        do{
+            let message = try await propertyService.deleteBooking(bookingID: bookingID)
+            print(message)
+        }catch let error as NetworkError{
+            self.error = error
+            print(error.localizedDescription)
+        }catch{
+            print("Other error: \(error.localizedDescription)")
+        }
+    }
     @MainActor
     func getBookingDeposits(by projectCategortDetailId: String) async throws {
         do {
             let depositedBooking = try await propertyService.getBookingDeposits(by: projectCategortDetailId)
             self.depositedBooking = depositedBooking
+            handleDepositedStatus()
         }catch let error as NetworkError{
             self.error = error
             print(error.localizedDescription)

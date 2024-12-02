@@ -58,6 +58,7 @@ struct StepThreeView: View {
                 
                 VStack{
                     Text("Các phương án thanh toán")
+                        .font(.callout.bold())
                     Divider()
                     //put picker here
                     Picker("Tên phương án", selection: $selectedPaymentProcessID) {
@@ -82,12 +83,13 @@ struct StepThreeView: View {
                 )
                 .padding(.horizontal)
                 .padding(.bottom)
+                Divider()
                 //Button
                 Button {
                     stepThreeConfirmationDialogIsPresented.toggle()
                 } label: {
                     Text("Xác nhận thông tin")
-                        .font(.headline)
+                        .font(.title3.weight(.black))
                         .fontDesign(.rounded)
                         .modifier(JHButtonModifier())
                 }

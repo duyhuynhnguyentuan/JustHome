@@ -9,6 +9,7 @@ import SwiftUI
 import StepperView
 
 struct ContractProgressView: View {
+    let updatedTime: String
     let contractStatus: ContractsStatus
     let steps = [
         Text("Chờ xác nhận TTDG").font(.system(.body, design: .rounded)),
@@ -22,10 +23,17 @@ struct ContractProgressView: View {
     ]
     
     var body: some View {
-        VStack(alignment: .center) {
+        VStack(alignment: .leading) {
             Text("Tiến độ hợp đồng")
                 .font(.title.bold())
-            
+            Text(getUpdatedTime())
+                .italic()
+                .font(.caption.bold())
+                .foregroundStyle(.red)
+            Text(updatedTime)
+                .italic()
+                .font(.callout.bold())
+                .foregroundStyle(.red)
             StepperView()
                 .addSteps(steps)
                 .indicators(getIndicators())
@@ -38,6 +46,34 @@ struct ContractProgressView: View {
         .padding(.top)
     }
     
+    private func getUpdatedTime() -> String {
+        switch contractStatus {
+        case .choxacnhanTTDG:
+            "Đang chờ xác nhận thỏa thuận giao dịch"
+        case .choxacnhanTTDC:
+            "Đã xác nhận thỏa thuận giao dịch vào:"
+        case .daxacnhanTTDC:
+            "Đã xác nhận thỏa thuận đặt cọc vào:"
+        case .daxacnhanchinhsachbanhang:
+            "Đã xác nhận chính sách bán hàng vào:"
+        case .daxacnhanphieutinhgia:
+            "Đã xác nhận phiếu tính giá vào:"
+        case .dathanhtoandot1hopdongmuaban:
+            "Đã thanh toán đợt 1 hợp đồng mua bán vào:"
+        case .daxacnhanhopdongmuaban:
+            "Đã xác nhận hợp đồng mua bán vào:"
+        case .dabangiaoquyensohuudat:
+            "Đã xác nhận bàn giao quyền sở hữu dất vào:"
+        case .choxacnhanTTCN:
+            "Đang chờ xác nhận thỏa thuận chuyển nhượng"
+        case .daxacnhanchuyennhuong:
+            "Đã xác nhận thỏa thuận chuyển nhượng vào:"
+        case .choxacnhanTTCNTTDC:
+            "Đang chờ xác nhận thỏa thuận chuyển nhượng thỏa thuận đặt cọc"
+        case .dahuy:
+            "Đã hủy"
+        }
+    }
     private func getIndicators() -> [StepperIndicationType<IndicatorImageView>] {
         let completed = StepperIndicationType.custom(IndicatorImageView(name: "completed"))
         let pending = StepperIndicationType.custom(IndicatorImageView(name: "pending"))
@@ -103,7 +139,7 @@ struct IndicatorImageView: View {
     }
 }
 
-#Preview {
-    ContractProgressView(contractStatus: .choxacnhanTTDG)
-}
+//#Preview {
+//    ContractProgressView(contractStatus: .choxacnhanTTDG)
+//}
 

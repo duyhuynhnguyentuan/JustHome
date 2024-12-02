@@ -202,7 +202,7 @@ struct ContractPaymentDetailUploadView: View {
                     alertMessage = message
                     print("Parsed Server Message: \(message)")
 
-                    if !message.isEmpty {
+                    if (message != "Đợt thanh toán trước đó chưa được xác nhận bởi Staff.") {
                         routerManager.push(to: .procedure)
                         routerManager.reset()
                         return

@@ -100,6 +100,7 @@ struct ProjectDetailView: View {
                             case .policy:
                                 SalesPolicy()
                                     .frame(width: props.size.width, height:props.size.height)
+                                    .padding()
                     
                             case .location:
                                 VirtualTour()
@@ -262,15 +263,21 @@ struct ProjectDetailView: View {
                     .font(.footnote)
             }
             Spacer()
-            HStack{
-                Label("Liên hệ", systemImage: "phone.bubble")
-                    .foregroundStyle(.white)
+            Button{
+                let telephone = "tel://0835488888"
+                guard let url = URL(string: telephone) else { return }
+                   UIApplication.shared.open(url)
+            }label: {
+                HStack{
+                    Label("Liên hệ", systemImage: "phone.bubble")
+                        .foregroundStyle(.white)
+                }
+                .padding()
+                .background(
+                    Capsule()
+                        .fill(Color.primaryGreen)
+                )
             }
-            .padding()
-            .background(
-                Capsule()
-                    .fill(Color.primaryGreen)
-            )
         }
         .padding()
         .background{

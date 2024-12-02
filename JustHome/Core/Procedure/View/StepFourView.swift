@@ -155,11 +155,12 @@ struct StepFourView: View {
                         y: 0
                     )
             )
+            Divider()
             Button{
                 stepFourConfirmationDialogIsPresented.toggle()
             }label: {
                 Text("Xác nhận")
-                    .font(.title3.bold())
+                    .font(.title3.bold().weight(.black))
                     .modifier(JHButtonModifier())
             }
             Text("Hoặc")

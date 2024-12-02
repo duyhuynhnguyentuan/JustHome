@@ -43,6 +43,7 @@ struct ContractByCustomerIDResponse: Codable, Identifiable {
     var id: String {
         contractID
     }
+    let expiredTime: String
     let contractID: String
     let projectName: String
     let propertyCode: String
@@ -87,7 +88,7 @@ extension Contract {
     static var sample = Contract(contractID: "3fa85f64-5717-4562-b3fc-2c963f66afa6", contractCode: "", contractType: "", createdTime: "", updatedTime: "", expiredTime: "", totalPrice: 0, description: "", contractDepositFile: "", contractSaleFile: "", priceSheetFile: "", contractTransferFile: "", status: "", documentTemplateID: "", documentName: "", bookingID: "", customerID: "", fullName: "", paymentProcessID: "", paymentProcessName: "", promotionDetailID: "")
 }
 extension ContractByCustomerIDResponse {
-    static var sample = ContractByCustomerIDResponse(contractID: "99da8a00-7f06-4a28-ae79-3dfc69c1873a", projectName: "Vinhomes Grand Park", propertyCode: "S302 3507", priceSold: 1200000000, status: "HAHHAHAHAH")
+    static var sample = ContractByCustomerIDResponse(expiredTime: "", contractID: "99da8a00-7f06-4a28-ae79-3dfc69c1873a", projectName: "Vinhomes Grand Park", propertyCode: "S302 3507", priceSold: 1200000000, status: "HAHHAHAHAH")
 } 
 
 // Extensions to create sample data

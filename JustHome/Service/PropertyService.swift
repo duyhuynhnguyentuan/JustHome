@@ -17,6 +17,13 @@ class PropertyService: PropertyServiceProtocol {
         self.httpClient = httpClient
     }
     @MainActor
+    func deleteBooking(bookingID: String) async throws -> MessageResponse {
+        let deleteBookingRequest = JHRequest(endpoint: .bookings, pathComponents: ["not-choose",bookingID])
+        let deleteBookingResouce = Resource(url: deleteBookingRequest.url!,method: .put(nil), modelType: MessageResponse.self)
+        let response = try await httpClient.load(deleteBookingResouce)
+        return response
+    }
+    @MainActor
     func getProperty(by categoryDetailID: String) async throws -> [Property] {
         let getPropertyRequest = JHRequest(endpoint: .propertys, pathComponents: ["categoryDetail", categoryDetailID])
         let getPropertyResouce = Resource(url: getPropertyRequest.url!, modelType: [Property].self)

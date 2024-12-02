@@ -38,7 +38,7 @@ struct ContractPaymentDetailView: View {
                             Label("Staff đã xác nhận", systemImage: "checkmark.seal.fill")
                                 .foregroundStyle(.green)
                                 .font(.caption) :   Label("Staff chưa xác nhận phiếu nhiệm chi đã upload", systemImage: "x.circle.fill")
-                                .foregroundStyle(.red)
+                                .foregroundStyle(.yellow)
                                 .font(.caption)
                         }else{
                             Label("Chưa upload ủy nhiệm chi", systemImage: "x.circle.fill")

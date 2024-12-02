@@ -37,7 +37,6 @@ struct LoadProfileView: View {
 
 
     var body: some View {
-        //TODO: Thành công thì show message :v
         VStack(spacing: 20) {
             Text("Chỉnh sửa thông tin cá nhân")
                 .font(.title)

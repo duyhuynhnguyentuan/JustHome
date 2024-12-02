@@ -41,6 +41,9 @@ struct NotificationView: View {
                         }
                     }
                 }
+                .onAppear{
+                    viewModel.loadData()
+                }
                 .refreshable {
                     viewModel.handleRefresh()
                 }

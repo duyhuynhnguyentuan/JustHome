@@ -49,16 +49,19 @@ struct ContractDetailView: View {
                         case .dabangiaoquyensohuudat:
                             VStack{
                                 Image(systemName: "checkmark.shield.fill")
+                                    .resizable()
+                                    .frame(width: 50, height: 50)
                                     .foregroundStyle(.primaryGreen)
-                                Text("Chúc mừng bạn đã thành công sở hữu đất!")
+                                Text("Chúc mừng bạn đã thành công sở hữu căn hộ!")
                                     .font(.title3)
                                     .bold()
-                                    .padding(.top)
                                 ContractPaymentDetailView(contractID: contractID)
+                                    .padding(.top)
                             }
                         case .dahuy:
                             VStack {
                                 Image(systemName: "exclamationmark.octagon.fill")
+                                    .frame(width: 50, height: 50)
                                     .foregroundStyle(.red)
                                 Text("Hợp đồng đã bị hủy!")
                                     .bold()
@@ -118,7 +121,7 @@ struct ContractDetailView: View {
                         }
                     }
                     .sheet(isPresented: $isPresentedProgressSheet) {
-                        ContractProgressView(contractStatus: viewModel.contractStatus!)
+                        ContractProgressView(updatedTime: viewModel.contract?.updatedTime ?? "N/A", contractStatus: viewModel.contractStatus!)
                             .presentationDetents([.medium, .large])
                             .presentationDragIndicator(.visible)
                             

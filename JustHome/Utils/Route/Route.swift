@@ -85,6 +85,7 @@ extension Route: View {
         case .realTime(let projectCategoryDetailID):
             RealTimeView(categoryDetailID: projectCategoryDetailID)
                 .toolbar(.hidden, for: .tabBar)
+                .navigationBarBackButtonHidden()
         case .contract(let contractID):
             ContractDetailView(contractID: contractID)
         case .procedure:

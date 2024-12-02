@@ -48,6 +48,11 @@ struct BookingDetailView: View {
                         .fontWeight(.semibold)
                         .foregroundStyle(.secondary)
                     switch status {
+                    case .khongchonsanpham:
+                        Text("Bạn đã không chọn sản phẩm nào")
+                            .foregroundStyle(.brown)
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
                     case .chuathanhtoan:
                         Text("Số tiền: \(Decimal(string: viewModel.openForSaleDetail?.reservationPrice ?? "") ?? Decimal(0), format: .currency(code: "VND"))")
                             .font(.caption)
