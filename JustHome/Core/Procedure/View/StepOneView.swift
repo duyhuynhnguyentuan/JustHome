@@ -124,7 +124,7 @@ struct StepOneView: View {
                 Text("Quê quán:")
                     .bold()
                 Spacer()
-                Text(viewModel.stepOneContractDetail?.customer.placeofOrigin ?? "N/A")
+                Text(viewModel.stepOneContractDetail?.customer.placeOfOrigin ?? "N/A")
             }
             .font(.callout)
             Divider()

@@ -14,7 +14,7 @@ struct ActivityViewRow: View {
             Text(bookings.status)
                 .foregroundStyle(bookings.statusColor)
                 .font(.footnote.bold())
-            Text("Dự án: \(bookings.projectName)")
+            Text(bookings.projectName)
                 .foregroundStyle(.primaryText)
                 .font(.title.bold())
             Text(bookings.createdTime)

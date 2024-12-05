@@ -78,7 +78,7 @@ struct StepFourView: View {
                     Text("Quê quán:")
                         .bold()
                     Spacer()
-                    Text(viewModel.stepFourResponse?.placeofOrigin ?? "N/A")
+                    Text(viewModel.stepFourResponse?.placeOfOrigin ?? "N/A")
                 }
                 .font(.callout)
                 Divider()

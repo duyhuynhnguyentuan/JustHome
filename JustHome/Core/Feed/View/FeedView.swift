@@ -111,16 +111,16 @@ struct FeedView: View {
                         .navigationTitle("Đã thêm gần đây")
                         .navigationDestination(for: Route.self) { $0 }
                         .navigationSplitViewStyle(.balanced)
-                        .toolbar {
-                            ToolbarItemGroup(placement: .topBarTrailing) {
-                                NavigationLink {
-                                    LikedProjectsView()
-                                } label: {
-                                    Image(systemName: "heart")
-                                        .tint(Color.red)
-                                }
-                            }
-                        }
+//                        .toolbar {
+//                            ToolbarItemGroup(placement: .topBarTrailing) {
+//                                NavigationLink {
+//                                    LikedProjectsView()
+//                                } label: {
+//                                    Image(systemName: "heart")
+//                                        .tint(Color.red)
+//                                }
+//                            }
+//                        }
                     }
 
                 case .idle:

@@ -92,6 +92,7 @@ class RealTimeViewModel: ObservableObject {
                     try await self.deleteBooking(bookingID: self.depositedBooking?.bookingID ?? "")
                 }
                 runningOutOfTime = true
+                disconnect()
             }
         }
     }
@@ -100,6 +101,8 @@ class RealTimeViewModel: ObservableObject {
         isTimerRunning = false
         timer?.invalidate()
         timer = nil
+        disconnect()
+        
     }
     func setupSignalRConnection() {
         // Replace with your actual backend URL

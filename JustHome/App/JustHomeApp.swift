@@ -44,7 +44,7 @@ extension AppDelegate: UNUserNotificationCenterDelegate{
         return [.badge, .sound, .list]
     }
 }
-extension AppDelegate: MessagingDelegate{
+extension AppDelegate: MessagingDelegate {
     func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
         Messaging.messaging().apnsToken = deviceToken
     }

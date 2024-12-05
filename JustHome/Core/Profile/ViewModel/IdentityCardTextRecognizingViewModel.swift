@@ -26,7 +26,7 @@ class IdentityCardTextRecognizingViewModel: ObservableObject {
             
             // Step 2: Update with new information
             customer.identityCardNumber = details.cardNumber!
-            customer.placeofOrigin = details.placeOfOrigin!
+            customer.placeOfOrigin = details.placeOfOrigin!
             customer.placeOfResidence = details.placeOfResidence!
             customer.dateOfExpiry = details.expiryDate!
             customer.bankNumber = bankNumber

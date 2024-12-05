@@ -61,7 +61,7 @@ struct PersonalInfoView: View {
                     Text("Nơi thường chú:")
                 }
                 LabeledContent{
-                    Text((viewModel.customer?.placeofOrigin ?? ""))
+                    Text((viewModel.customer?.placeOfOrigin ?? ""))
                 }label: {
                     Text("Quê quán:")
                 }

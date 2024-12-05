@@ -49,7 +49,7 @@ struct BookingDetailView: View {
                         .foregroundStyle(.secondary)
                     switch status {
                     case .khongchonsanpham:
-                        Text("Bạn đã không chọn sản phẩm nào")
+                        Text("Bạn đã không chọn")
                             .foregroundStyle(.brown)
                             .font(.caption)
                             .foregroundStyle(.secondary)

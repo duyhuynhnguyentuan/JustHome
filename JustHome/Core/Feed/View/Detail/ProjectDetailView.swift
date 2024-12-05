@@ -284,6 +284,7 @@ struct ProjectDetailView: View {
             RoundedRectangle(cornerRadius: 12)
                 .stroke(.primaryGreen, lineWidth: 2)
         }
+        .padding(.horizontal, 5)
     }
     @ViewBuilder
     func CustomTabBar() -> some View {

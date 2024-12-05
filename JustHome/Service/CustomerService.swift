@@ -14,7 +14,7 @@ struct loadCustomerByIDResponse: Codable {
     var phoneNumber: String
     var identityCardNumber: String?
     var nationality: String
-    var placeofOrigin: String?
+    var placeOfOrigin: String?
     var placeOfResidence: String?
     var dateOfExpiry: String?
     var taxcode: String?
@@ -86,7 +86,7 @@ extension CustomerService {
         addField(name: "PhoneNumber", value: customer.phoneNumber)
         addField(name: "IdentityCardNumber", value: customer.identityCardNumber!)
         addField(name: "Nationality", value: customer.nationality)
-        addField(name: "PlaceofOrigin", value: customer.placeofOrigin!)
+        addField(name: "PlaceofOrigin", value: customer.placeOfOrigin!)
         addField(name: "PlaceOfResidence", value: customer.placeOfResidence!)
         addField(name: "DateOfExpiry", value: customer.dateOfExpiry!)
         addField(name: "Taxcode", value: customer.taxcode!)

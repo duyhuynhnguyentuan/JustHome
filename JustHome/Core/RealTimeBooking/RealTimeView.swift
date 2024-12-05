@@ -98,7 +98,7 @@ struct RealTimeView: View {
                         routerManager.push(to: .activity)
                     }
                 }label: {
-                    Text("Tôi không muốn chọn nữa")
+                    Text("Tôi không muốn chọn.")
                         .italic()
                         .font(.headline)
                         .foregroundStyle(.secondary)
@@ -148,8 +148,8 @@ struct RealTimeView: View {
                 viewmodel.disconnect()
             viewmodel.stopTimer()
         }
-        .onChange(of: viewmodel.runningOutOfTime) { runningOutOfTime in
-            if runningOutOfTime {
+        .onChange(of: viewmodel.runningOutOfTime) {
+            if viewmodel.runningOutOfTime {
                 routerManager.push(to: .activity)
             }
         }

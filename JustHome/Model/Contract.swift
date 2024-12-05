@@ -100,7 +100,7 @@ extension Customer {
         phoneNumber: "0835488888",
         identityCardNumber: "000292909302939",
         nationality: "Việt Nam",
-        placeofOrigin: "Xã Hưng Yên, Huyện An Biên, Kiên Giang",
+        placeOfOrigin: "Xã Hưng Yên, Huyện An Biên, Kiên Giang",
         placeOfResidence: "Xã Hưng Yên, Huyện An Biên, Kiên Giang",
         dateOfExpiry: nil,
         taxcode: "278237877",
